@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.gdsc.gdsc_mbu" />
+                  <option name="mobileSdkAppId" value="1:147517855834:android:901eb6a83ed1ea82d9e063" />
+                  <option name="projectId" value="gdsc-mbu-f4223" />
+                  <option name="projectNumber" value="147517855834" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
