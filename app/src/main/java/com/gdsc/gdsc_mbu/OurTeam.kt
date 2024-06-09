@@ -7,7 +7,7 @@ import androidx.compose.ui.unit.dp
 import com.gdsc.gdsc_mbu.ui.theme.lightblack
 
 @Composable
-fun ourteam(){
+fun Ourteam(){
     Divider(thickness=2.5.dp, color= lightblack)
     Text("Our Team")
 }

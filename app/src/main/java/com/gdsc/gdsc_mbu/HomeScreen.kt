@@ -1,15 +1,15 @@
 package com.gdsc.gdsc_mbu
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material.Text
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.gdsc.gdsc_mbu.ui.theme.lightblack
 
@@ -26,7 +26,7 @@ fun HomeScreen() {
         Text(
             text = "Welcome to GDSC MBU!",
             style = MaterialTheme.typography.h6,
-            modifier = Modifier.padding(10.dp)
+            modifier = Modifier.padding(0.dp)
         )
     }
 }

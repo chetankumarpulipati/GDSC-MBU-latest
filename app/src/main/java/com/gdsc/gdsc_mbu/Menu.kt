@@ -158,7 +158,7 @@ fun Menu() {
                     text = { Text("Share Idea") },
                     icon = { Icon(Icons.Filled.Lightbulb, contentDescription = "Ideaspot") },
                     modifier = Modifier.clickable {
-                        navController.navigate("Ideaspot")
+                        navController.navigate("Idea-spot")
                         scope.launch {
                             delay(300)
                             scaffoldState.drawerState.close()
@@ -220,8 +220,8 @@ fun Menu() {
         NavHost(navController, startDestination = "Home") {
             composable("Home") { HomeScreen() }
             composable("Profile") { ProfileScreen() }
-            composable("Ideaspot") { ideaspot() }
-            composable("our-team") { ourteam() }
+            composable("Idea-spot") { ideaspot() }
+            composable("our-team") { Ourteam() }
             composable("about") { about() }
             composable("Settings") { settings() }
             composable("Feedback") { feedback() }
