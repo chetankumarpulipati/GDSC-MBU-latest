@@ -23,9 +23,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(navController: NavController) {
     val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
@@ -141,12 +142,17 @@ fun ProfileScreen() {
         ){
             Text("You haven't earned any certificates")
         }
-        Logout { }
+        Logout (navController){
+
+        }
     }
 }
 @Composable
-fun Logout(onClick: () -> Unit) {
-    FilledTonalButton(onClick = { onClick() }) {
+fun Logout(navController: NavController, onClick: () -> Unit) {
+    FilledTonalButton(onClick = {
+        onClick()
+        navController.navigate("LoginScreen")
+    }) {
         Text("Logout")
     }
 }

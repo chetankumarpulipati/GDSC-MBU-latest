@@ -219,7 +219,7 @@ fun Menu() {
         BodyContent(Modifier.padding(innerPadding))
         NavHost(navController, startDestination = "Home") {
             composable("Home") { HomeScreen() }
-            composable("Profile") { ProfileScreen() }
+            composable("Profile") { ProfileScreen(navController) }
             composable("Idea-spot") { ideaspot() }
             composable("our-team") { Ourteam() }
             composable("about") { about() }
