@@ -53,7 +53,6 @@ class MainActivity : ComponentActivity() {
         setContent{
             val navController = rememberNavController()
 
-            // Get login state
             val sharedPref = getSharedPreferences("Login", Context.MODE_PRIVATE)
             val isLoggedIn = sharedPref.getBoolean("isLoggedIn", false)
 

@@ -34,7 +34,7 @@ fun register(navController: NavController) {
         )
         Button(
             onClick = {
-                navController.navigate("Home")
+                navController.navigate("login")
             },
             modifier = Modifier
                 .fillMaxWidth(0.8f)
