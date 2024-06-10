@@ -1,6 +1,5 @@
 package com.gdsc.gdsc_mbu
 
-import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -17,21 +16,17 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.launch
 
 @Composable
-fun ProfileScreen(navController: NavController) {
+fun ProfileScreen(navController: NavController, authViewModel: AuthViewModel) {
     val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
@@ -66,7 +61,7 @@ fun ProfileScreen(navController: NavController) {
         Box(modifier = Modifier.padding(50.dp)) {
             Text("You haven't earned any certificates")
         }
-        LogoutButton(navController)
+        LogoutButton(navController, authViewModel)
     }
 }
 
@@ -89,31 +84,12 @@ fun ProfileItem(title: String, value: String) {
         )
     }
 }
-
-fun handleLogout(navController: NavController, context: Context) {
-    FirebaseAuth.getInstance().signOut()
-
-    val user = FirebaseAuth.getInstance().currentUser
-    if (user == null) {
-        println("Sign out success")
-    }
-
-    val sharedPref = context.getSharedPreferences("Login", Context.MODE_PRIVATE)
-    with(sharedPref.edit()) {
-        putBoolean("isLoggedIn", false)
-        apply()
-    }
-
-}
-
-    @Composable
-fun LogoutButton(navController: NavController) {
-    val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
-
+@Composable
+fun LogoutButton(navController: NavController, authViewModel: AuthViewModel) {
     Button(onClick = {
-        coroutineScope.launch {
-            handleLogout(navController, context)
+        authViewModel.logout()
+        navController.navigate("login") {
+            popUpTo("profile") { inclusive = true }
         }
     }) {
         Text("Logout")

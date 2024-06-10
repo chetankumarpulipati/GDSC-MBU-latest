@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -53,6 +54,8 @@ fun Menu() {
     val navController = rememberNavController() // Add this line
     val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
     val scope = rememberCoroutineScope()
+    val authViewModel: AuthViewModel = viewModel()
+
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -219,7 +222,7 @@ fun Menu() {
         BodyContent(Modifier.padding(innerPadding))
         NavHost(navController, startDestination = "Home") {
             composable("Home") { HomeScreen() }
-            composable("Profile") { ProfileScreen(navController) }
+            composable("Profile") { ProfileScreen(navController, authViewModel) }
             composable("Idea-spot") { ideaspot() }
             composable("our-team") { Ourteam() }
             composable("about") { about() }

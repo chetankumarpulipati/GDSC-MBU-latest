@@ -1,10 +1,10 @@
 package com.gdsc.gdsc_mbu
 
-import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -47,46 +47,43 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 class MainActivity : ComponentActivity() {
+    private val authViewModel: AuthViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent{
-            val navController = rememberNavController()
+        val sharedPreferenceManager = SharedPreferenceManager(this)
 
-            val sharedPref = getSharedPreferences("Login", Context.MODE_PRIVATE)
-            val isLoggedIn = sharedPref.getBoolean("isLoggedIn", false)
+        setContent {
+            val navController = rememberNavController()
+            val isLoggedIn = sharedPreferenceManager.isLoggedIn
 
             if (isLoggedIn) {
                 Menu()
             } else {
                 LoginScreen(onLogin = { email, password -> loginWithEmail(email, password, navController) })
             }
+
         }
     }
 
-    fun loginWithEmail(email: String, password: String, navController: NavController) { // Moved loginWithEmail here
-            val auth = Firebase.auth
-            auth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        val user = auth.currentUser
-                        println("Sign in success: $user")
+    fun loginWithEmail(email: String, password: String, navController: NavController) {
+        val auth = Firebase.auth
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val user = auth.currentUser
+                    println("Sign in success: $user")
 
-                        // Save login state
-                        val sharedPref = getSharedPreferences("Login", Context.MODE_PRIVATE)
-                        with (sharedPref.edit()) {
-                            putBoolean("isLoggedIn", true)
-                            apply()
-                        }
+                    // Update login state
+                    val sharedPreferenceManager = SharedPreferenceManager(this)
+                    sharedPreferenceManager.isLoggedIn = true
 
-                        setContent{
-                            Menu()
-                        }
-                    } else {
-                        println("Sign in failed")
-                    }
+                } else {
+                    println("Sign in failed")
                 }
-        }
+            }
+    }
+
 
     @Composable
     fun LoginScreen(onLogin: (String, String) -> Unit) {
@@ -161,14 +158,13 @@ class MainActivity : ComponentActivity() {
                             "Please enter both email and password",
                             Toast.LENGTH_SHORT
                         ).show()
-                    }
-                    else if(!email.endsWith("@gmail.com")){
+                    } else if (!email.endsWith("@gmail.com")) {
                         Toast.makeText(
                             this@MainActivity,
                             "Please enter a valid email",
                             Toast.LENGTH_SHORT
                         ).show()
-                    }else {
+                    } else {
                         isProcessing = true
                         onLogin(email, password)
                     }
@@ -184,7 +180,7 @@ class MainActivity : ComponentActivity() {
 
             Button(
                 onClick = {
-                    setContent{
+                    setContent {
                         register(navController)
                     }
                 },
@@ -197,7 +193,7 @@ class MainActivity : ComponentActivity() {
 
             Button(
                 onClick = {
-                    setContent{
+                    setContent {
                         register(navController)
                     }
                 },
@@ -210,5 +206,4 @@ class MainActivity : ComponentActivity() {
 
         }
     }
-
 }
