@@ -1,5 +1,6 @@
 package com.gdsc.gdsc_mbu
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -24,6 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+
 
 @Composable
 fun ProfileScreen(navController: NavController, authViewModel: AuthViewModel) {
@@ -61,7 +63,7 @@ fun ProfileScreen(navController: NavController, authViewModel: AuthViewModel) {
         Box(modifier = Modifier.padding(50.dp)) {
             Text("You haven't earned any certificates")
         }
-        LogoutButton(navController, authViewModel)
+        LogoutButton(navController,authViewModel)
     }
 }
 
@@ -84,12 +86,24 @@ fun ProfileItem(title: String, value: String) {
         )
     }
 }
+//@Composable
+//fun LogoutButton(navController: NavController,authViewModel: AuthViewModel) {
+//    Button(onClick = {
+//        authViewModel.logout()
+//        navController.navigate("LoginScreen")
+//    }) {
+//        Text("Logout")
+//    }
+//}
 @Composable
 fun LogoutButton(navController: NavController, authViewModel: AuthViewModel) {
     Button(onClick = {
-        authViewModel.logout()
-        navController.navigate("login") {
-            popUpTo("profile") { inclusive = true }
+        try {
+            authViewModel.logout()
+            Log.d("LogoutButton", "Logged out successfully")
+            navController.navigate("LoginScreen")
+        } catch (e: Exception) {
+            Log.e("LogoutButton", "Error during logout", e)
         }
     }) {
         Text("Logout")

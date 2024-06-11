@@ -222,7 +222,7 @@ fun Menu() {
         BodyContent(Modifier.padding(innerPadding))
         NavHost(navController, startDestination = "Home") {
             composable("Home") { HomeScreen() }
-            composable("Profile") { ProfileScreen(navController, authViewModel) }
+            composable("Profile") { ProfileScreen( navController,authViewModel) }
             composable("Idea-spot") { ideaspot() }
             composable("our-team") { Ourteam() }
             composable("about") { about() }
