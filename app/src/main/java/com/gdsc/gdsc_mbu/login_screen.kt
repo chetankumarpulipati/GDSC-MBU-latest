@@ -2,6 +2,7 @@ package com.gdsc.gdsc_mbu
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -51,10 +52,12 @@ fun loginWithEmail(email: String, password: String, navController: NavController
         .addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val user = auth.currentUser
-                println("Sign in success: $user")
+                val userEmail = user?.email.toString()
+                Log.d("Login", "Sign in successful with email: $userEmail")
 
                 val sharedPreferenceManager = SharedPreferenceManager(context)
                 sharedPreferenceManager.isLoggedIn = true
+                sharedPreferenceManager.userEmail = userEmail
 
                 val intent = Intent(context, WelcomeActivity::class.java)
                 context.startActivity(intent)
