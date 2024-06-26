@@ -68,7 +68,7 @@ fun loginWithEmail(email: String, password: String, navController: NavController
 }
 
     @Composable
-    fun LoginScreen(onLogin: (String, String, NavController, Context) -> Unit, context: Context) {
+    fun LoginScreen(navController: NavController, authViewModel: AuthViewModel, onLogin: (String, String, NavController, Context) -> Unit, context: Context) {
         var email by rememberSaveable { mutableStateOf("") }
         var password by rememberSaveable { mutableStateOf("") }
         var passwordVisible by remember { mutableStateOf(false) }

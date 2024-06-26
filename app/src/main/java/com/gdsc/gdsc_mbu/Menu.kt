@@ -1,5 +1,7 @@
 package com.gdsc.gdsc_mbu
 
+import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,6 +20,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.ListItem
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Feedback
 import androidx.compose.material.icons.filled.Home
@@ -37,10 +40,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -48,10 +53,11 @@ import com.gdsc.gdsc_mbu.ui.theme.lightred
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun Menu() {
-    val navController = rememberNavController() // Add this line
+    val navController = rememberNavController()
     val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
     val scope = rememberCoroutineScope()
     val authViewModel: AuthViewModel = viewModel()
@@ -69,14 +75,14 @@ fun Menu() {
                             painter = painterResource(id = R.drawable.gdsc_logo), // Replace with your image resource
                             contentDescription = "App Logo",
                             modifier = Modifier
-                                .padding(start=110.dp)
+                                .padding(start = 110.dp)
                                 .height(50.dp)
                                 .width(50.dp)
                         )
                         Text(
                             text = "GDSC MBU",
                             modifier = Modifier
-                                .padding(start=50.dp)
+                                .padding(start = 50.dp)
                                 .align(Alignment.CenterVertically),
                         )
                     }
@@ -216,18 +222,30 @@ fun Menu() {
                         }
                     }
                 )
+                ListItem(
+                    text = { Text("Logout") },
+                    icon = { Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = "Logout") },
+                    modifier = Modifier.clickable {
+                        navController.navigate("Logout")
+                        scope.launch {
+                            delay(300)
+                            scaffoldState.drawerState.close()
+                        }
+                    }
+                )
             }
         }
     ) { innerPadding ->
         BodyContent(Modifier.padding(innerPadding))
         NavHost(navController, startDestination = "Home") {
-            composable("Home") { HomeScreen() }
+            composable("Home") { HomeScreen(navController) }
             composable("Profile") { ProfileScreen( navController,authViewModel) }
             composable("Idea-spot") { ideaspot() }
             composable("our-team") { Ourteam() }
             composable("about") { about() }
             composable("Settings") { settings() }
             composable("Feedback") { feedback() }
+            composable("Logout") { onLogout(navController,authViewModel) }
         }
     }
 }
@@ -235,4 +253,17 @@ fun Menu() {
 @Composable
 fun BodyContent(modifier: Modifier = Modifier) {
 
+}
+
+@Composable
+fun onLogout(navController: NavController, authViewModel: AuthViewModel){
+    val context = LocalContext.current
+    try {
+        authViewModel.logout()
+        Log.d("LogoutButton", "Logged out successfully")
+        val intent = Intent(context, MainActivity::class.java)
+        context.startActivity(intent)
+    } catch (e: Exception) {
+        Log.e("LogoutButton", "Error during logout", e)
+    }
 }

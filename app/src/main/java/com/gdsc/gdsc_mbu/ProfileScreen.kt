@@ -1,6 +1,5 @@
 package com.gdsc.gdsc_mbu
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,7 +23,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-
 
 @Composable
 fun ProfileScreen(navController: NavController, authViewModel: AuthViewModel) {
@@ -63,7 +60,9 @@ fun ProfileScreen(navController: NavController, authViewModel: AuthViewModel) {
         Box(modifier = Modifier.padding(50.dp)) {
             Text("You haven't earned any certificates")
         }
-        LogoutButton(navController,authViewModel)
+//        Button(onClick = {onLogout(navController,authViewModel)}) {
+//            Text("Logout")
+//        }
     }
 }
 
@@ -86,26 +85,4 @@ fun ProfileItem(title: String, value: String) {
         )
     }
 }
-//@Composable
-//fun LogoutButton(navController: NavController,authViewModel: AuthViewModel) {
-//    Button(onClick = {
-//        authViewModel.logout()
-//        navController.navigate("LoginScreen")
-//    }) {
-//        Text("Logout")
-//    }
-//}
-@Composable
-fun LogoutButton(navController: NavController, authViewModel: AuthViewModel) {
-    Button(onClick = {
-        try {
-            authViewModel.logout()
-            Log.d("LogoutButton", "Logged out successfully")
-            navController.navigate("Home")
-        } catch (e: Exception) {
-            Log.e("LogoutButton", "Error during logout", e)
-        }
-    }) {
-        Text("Logout")
-    }
-}
+

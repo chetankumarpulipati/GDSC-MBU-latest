@@ -2,7 +2,6 @@ package com.gdsc.gdsc_mbu
 
 import android.os.Bundle
 import android.widget.Button
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 
@@ -16,7 +15,7 @@ class WelcomeActivity : ComponentActivity() {
             setContent {
                 Menu()
             }
-            Toast.makeText(this, "Chevron button clicked", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(this, "Chevron button clicked", Toast.LENGTH_SHORT).show()
         }
     }
 }

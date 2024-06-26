@@ -11,10 +11,11 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.gdsc.gdsc_mbu.ui.theme.lightblack
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavController) {
     Divider(thickness=2.5.dp, color= lightblack)
     val scrollState = rememberScrollState()
     Column(
@@ -29,4 +30,5 @@ fun HomeScreen() {
             modifier = Modifier.padding(0.dp)
         )
     }
+
 }
