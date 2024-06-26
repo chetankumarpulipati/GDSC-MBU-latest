@@ -101,7 +101,7 @@ fun LogoutButton(navController: NavController, authViewModel: AuthViewModel) {
         try {
             authViewModel.logout()
             Log.d("LogoutButton", "Logged out successfully")
-            navController.navigate("LoginScreen")
+            navController.navigate("Home")
         } catch (e: Exception) {
             Log.e("LogoutButton", "Error during logout", e)
         }
