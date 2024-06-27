@@ -43,11 +43,9 @@ class WelcomeActivity : ComponentActivity() {
                 return@setOnClickListener
             }
             sharedPreferenceManager.saveUserDetails(userDetails)
-
             setContent {
                 Menu()
             }
         }
-
     }
 }

@@ -23,6 +23,7 @@ import com.google.firebase.ktx.Firebase
 fun HomeScreen(navController: NavController) {
     Divider(thickness=2.5.dp, color= lightblack)
     val scrollState = rememberScrollState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
