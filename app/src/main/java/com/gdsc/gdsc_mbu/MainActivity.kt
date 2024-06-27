@@ -22,13 +22,14 @@ class MainActivity : ComponentActivity() {
     private val CAMERA_PERMISSION_CODE = 100
     private val LOCATION_PERMISSION_CODE = 101
     private val NOTIFICATION_PERMISSION_CODE = 102
-
+    var count = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Request location permission
-        locationPermission()
+        while(count == 0){
+            locationPermission()
+            count+=1
+        }
 
         setContent {
             val navController = rememberNavController()
@@ -83,32 +84,27 @@ class MainActivity : ComponentActivity() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        val sharedPreferenceManager = SharedPreferenceManager(this)
         when (requestCode) {
             LOCATION_PERMISSION_CODE -> {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-//                    sharedPreferenceManager.setLocationPermission(true)
                     checkCameraPermission()
                 } else {
-//                    sharedPreferenceManager.setLocationPermission(false)
                     checkCameraPermission()
                 }
             }
             CAMERA_PERMISSION_CODE -> {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     Toast.makeText(this, "Enable Notification Permission", Toast.LENGTH_SHORT).show()
-//                    sharedPreferenceManager.setCameraPermission(true)
                    requestNotificationPermission()
                 } else {
                     Toast.makeText(this, "Enable Notification Permission", Toast.LENGTH_SHORT).show()
-//                    sharedPreferenceManager.setCameraPermission(false)
                     requestNotificationPermission()
                 }
             }
             NOTIFICATION_PERMISSION_CODE -> {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-//                    sharedPreferenceManager.setNotificationPermission(true)
                 } else {
-//                    sharedPreferenceManager.setNotificationPermission(false)
                 }
             }
         }

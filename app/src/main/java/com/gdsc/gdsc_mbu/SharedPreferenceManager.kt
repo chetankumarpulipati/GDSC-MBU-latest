@@ -2,7 +2,6 @@ package com.gdsc.gdsc_mbu
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.util.Log
 
 class SharedPreferenceManager(context: Context) {
     private val prefs: SharedPreferences = context.getSharedPreferences("Login", Context.MODE_PRIVATE)
@@ -31,22 +30,9 @@ class SharedPreferenceManager(context: Context) {
         return userDetails
     }
 
-    private val NOTIFICATION_PERMISSION_KEY = "notification_permission"
-    fun setNotificationPermission(status: Boolean) {
-        prefs.edit().putBoolean(NOTIFICATION_PERMISSION_KEY, status).apply()
-        Log.d("Notification Permission", "Permission set to $status")
-    }
-
-    private val CAMERA_PERMISSION_KEY = "camera_permission"
-    fun setCameraPermission(status: Boolean) {
-        prefs.edit().putBoolean(CAMERA_PERMISSION_KEY, status).apply()
-        Log.d("Camera Permission", "Permission set to $status")
-    }
-
-    private val LOCATION_PERMISSION_KEY = "location_permission"
-    fun setLocationPermission(status: Boolean) {
-        prefs.edit().putBoolean(LOCATION_PERMISSION_KEY, status).apply()
-        Log.d("Location Permission", "Permission set to $status")
+    val LOCATION_PERMISSION_KEY = "location_permission"
+    fun isLocationPermissionGranted(): Boolean {
+        return prefs.getBoolean(LOCATION_PERMISSION_KEY, false)
     }
 
 }
