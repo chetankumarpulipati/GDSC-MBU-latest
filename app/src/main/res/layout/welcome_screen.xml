@@ -2,15 +2,17 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="16dp"
         android:background="@color/background_color"
-        android:gravity="center">
+        android:gravity="center"
+        android:layout_gravity="center">
 
         <TextView
             android:id="@+id/details_heading"
@@ -26,7 +28,8 @@
             android:id="@+id/welcome_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Name"
+            android:hint="Full Name"
+            android:singleLine="true"
             android:padding="12dp"
             android:background="@drawable/edit_text_background"
             android:layout_marginBottom="16dp" />
@@ -36,6 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Mobile Number"
+            android:singleLine="true"
             android:padding="12dp"
             android:background="@drawable/edit_text_background"
             android:layout_marginBottom="16dp" />
@@ -45,6 +49,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Roll Number"
+            android:singleLine="true"
             android:padding="12dp"
             android:background="@drawable/edit_text_background"
             android:layout_marginBottom="16dp" />
@@ -53,7 +58,8 @@
             android:id="@+id/welcome_college"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="College / University studying"
+            android:hint="College / University Name"
+            android:singleLine="true"
             android:padding="12dp"
             android:background="@drawable/edit_text_background"
             android:layout_marginBottom="24dp" />

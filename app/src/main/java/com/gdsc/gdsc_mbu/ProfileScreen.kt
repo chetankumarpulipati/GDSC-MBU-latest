@@ -1,6 +1,5 @@
 package com.gdsc.gdsc_mbu
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -25,8 +24,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 
 @Composable
 fun ProfileScreen(navController: NavController, authViewModel: AuthViewModel) {
@@ -37,21 +34,7 @@ fun ProfileScreen(navController: NavController, authViewModel: AuthViewModel) {
     val userMobile = sharedPrefManager.getUserDetails()["mobile"] ?: "Mobile number not available"
     val userRoll = sharedPrefManager.getUserDetails()["roll"] ?: "Roll number not available"
     val userCollege = sharedPrefManager.getUserDetails()["college"] ?: "College name not available"
-    val db = Firebase.firestore
-    val data = hashMapOf(
-        "name" to userName,
-        "email" to userEmail,
-        "mobile" to userMobile,
-        "roll" to userRoll,
-        "college" to userCollege)
-    val documentReference = db.collection("USERDETAILS").document(userEmail)
-    documentReference.set(data)
-        .addOnSuccessListener{
-            Log.d("data-firestore", "DocumentSnapshot added with ID: ${documentReference.id}")
-        }
-        .addOnFailureListener{
-            Log.d("data-firestore", "Error adding document", it)
-        }
+
     Column(
         modifier = Modifier
             .fillMaxSize()

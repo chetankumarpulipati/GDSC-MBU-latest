@@ -26,14 +26,8 @@ class WelcomeActivity : ComponentActivity() {
             userDetails["roll"] = rollNumber.text.toString()
             userDetails["college"] = collegeName.text.toString()
 
-            val mobileNumber = userDetails["mobile"]
-
             if (userDetails["name"].isNullOrEmpty()){
                 welcomeName.error = "Name cannot be empty"
-                return@setOnClickListener
-            }
-            if (mobileNumber.isNullOrEmpty() || mobileNumber.matches(Regex("[a-z]+")).not()) {
-                welcomeMobile.error = "Please check your mobile number"
                 return@setOnClickListener
             }
             if (userDetails["mobile"]!!.length != 10){

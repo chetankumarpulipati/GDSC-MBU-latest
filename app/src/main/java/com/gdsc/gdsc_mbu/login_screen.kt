@@ -45,9 +45,9 @@ import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
-
 fun loginWithEmail(email: String, password: String, navController: NavController, context: Context) {
     val auth = Firebase.auth
+
     auth.signInWithEmailAndPassword(email, password)
         .addOnCompleteListener { task ->
             if (task.isSuccessful) {

@@ -22,6 +22,7 @@ class MainActivity : ComponentActivity() {
             AppNavigator(isLoggedIn = isLoggedIn)
     }
     }
+
     @Composable
     fun AppNavigator(isLoggedIn: Boolean) {
         val navController = rememberNavController()
@@ -37,4 +38,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+
 }
