@@ -16,6 +16,7 @@ class WelcomeActivity : ComponentActivity() {
         val welcomeMobile: EditText = findViewById(R.id.welcome_mobile)
         val rollNumber: EditText = findViewById(R.id.welcome_roll_number)
         val collegeName: EditText = findViewById(R.id.welcome_college)
+        val sharedPreferenceManager = SharedPreferenceManager(this)
 
         proceedButton.setOnClickListener {
             val userDetails = mutableMapOf<String, String>()
@@ -41,6 +42,7 @@ class WelcomeActivity : ComponentActivity() {
                 collegeName.error = "College name cannot be empty"
                 return@setOnClickListener
             }
+            sharedPreferenceManager.saveUserDetails(userDetails)
 
             setContent {
                 Menu()

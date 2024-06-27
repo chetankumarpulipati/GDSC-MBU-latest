@@ -1,5 +1,6 @@
 package com.gdsc.gdsc_mbu
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -19,14 +20,39 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 @Composable
 fun ProfileScreen(navController: NavController, authViewModel: AuthViewModel) {
     val scrollState = rememberScrollState()
+    val sharedPrefManager = SharedPreferenceManager(LocalContext.current)
+    val userEmail = sharedPrefManager.userEmail ?: return
+    val userName = sharedPrefManager.getUserDetails()["name"] ?: "Name not available"
+    val userMobile = sharedPrefManager.getUserDetails()["mobile"] ?: "Mobile number not available"
+    val userRoll = sharedPrefManager.getUserDetails()["roll"] ?: "Roll number not available"
+    val userCollege = sharedPrefManager.getUserDetails()["college"] ?: "College name not available"
+    val db = Firebase.firestore
+    val data = hashMapOf(
+        "name" to userName,
+        "email" to userEmail,
+        "mobile" to userMobile,
+        "roll" to userRoll,
+        "college" to userCollege)
+    val storesCollection = db.collection("/USERDETAILS")
+    val documentReference = storesCollection.document("RU7C3ZCqvZSlaUOUFH7E")
+    documentReference.set(data)
+        .addOnSuccessListener{
+            Log.d("data-firestore", "DocumentSnapshot added with ID: ${documentReference.id}")
+        }
+        .addOnFailureListener{
+            Log.d("data-firestore", "Error adding document", it)
+        }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -47,10 +73,11 @@ fun ProfileScreen(navController: NavController, authViewModel: AuthViewModel) {
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
-        ProfileItem(title = "Full Name", value = "John Doe")
-        ProfileItem(title = "Email Id", value = "john.doe@example.com")
-        ProfileItem(title = "Mobile Number", value = "+91 1234567890")
-        ProfileItem(title = "University/College", value = "xyz University")
+        ProfileItem(title = "Full Name", value = userName)
+        ProfileItem(title = "Email Id", value = userEmail)
+        ProfileItem(title = "Mobile Number", value = "+91 "+userMobile)
+        ProfileItem(title = "University/College", value = userCollege)
+        ProfileItem(title = "Roll Number", value = userRoll)
         ProfileItem(title = "GDSC-Chapter", value = "Member in GDSC MBU")
         Text(
             text = "Certificates",
@@ -60,9 +87,6 @@ fun ProfileScreen(navController: NavController, authViewModel: AuthViewModel) {
         Box(modifier = Modifier.padding(50.dp)) {
             Text("You haven't earned any certificates")
         }
-//        Button(onClick = {onLogout(navController,authViewModel)}) {
-//            Text("Logout")
-//        }
     }
 }
 
