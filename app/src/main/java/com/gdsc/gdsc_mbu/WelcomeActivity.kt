@@ -26,15 +26,21 @@ class WelcomeActivity : ComponentActivity() {
             userDetails["roll"] = rollNumber.text.toString()
             userDetails["college"] = collegeName.text.toString()
 
+            val mobileNumber = userDetails["mobile"]
+
             if (userDetails["name"].isNullOrEmpty()){
                 welcomeName.error = "Name cannot be empty"
                 return@setOnClickListener
             }
-            if (userDetails["mobile"].isNullOrEmpty()){
-                welcomeMobile.error = "Mobile number cannot be empty"
+            if (mobileNumber.isNullOrEmpty() || mobileNumber.matches(Regex("[a-z]+")).not()) {
+                welcomeMobile.error = "Please check your mobile number"
                 return@setOnClickListener
             }
-            if (userDetails["roll"].isNullOrEmpty()){
+            if (userDetails["mobile"]!!.length != 10){
+                welcomeMobile.error = "Mobile number should be of 10 digits"
+                return@setOnClickListener
+            }
+            if(userDetails["roll"].isNullOrEmpty()){
                 rollNumber.error = "Roll number cannot be empty"
                 return@setOnClickListener
             }

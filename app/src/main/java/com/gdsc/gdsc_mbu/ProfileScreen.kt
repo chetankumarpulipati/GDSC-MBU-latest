@@ -44,8 +44,7 @@ fun ProfileScreen(navController: NavController, authViewModel: AuthViewModel) {
         "mobile" to userMobile,
         "roll" to userRoll,
         "college" to userCollege)
-    val storesCollection = db.collection("/USERDETAILS")
-    val documentReference = storesCollection.document("RU7C3ZCqvZSlaUOUFH7E")
+    val documentReference = db.collection("USERDETAILS").document(userEmail)
     documentReference.set(data)
         .addOnSuccessListener{
             Log.d("data-firestore", "DocumentSnapshot added with ID: ${documentReference.id}")
