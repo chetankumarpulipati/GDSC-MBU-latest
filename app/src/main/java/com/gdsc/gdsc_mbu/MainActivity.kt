@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -27,7 +28,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         while(count == 0){
-            locationPermission()
+            checkPermissions()
             count+=1
         }
 
@@ -37,6 +38,7 @@ class MainActivity : ComponentActivity() {
             val isLoggedIn = sharedPreferenceManager.isLoggedIn
             AppNavigator(isLoggedIn = isLoggedIn)
         }
+        logPermissionValues()
     }
 
     @Composable
@@ -56,11 +58,17 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun checkPermissions() {
+        locationPermission()
+    }
+
     private fun locationPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
             requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_CODE)
         } else {
-
+            val sharedPreferenceManager = SharedPreferenceManager(this)
+            sharedPreferenceManager.isLocationPermissionGranted = true
+            checkCameraPermission()
         }
     }
 
@@ -68,7 +76,9 @@ class MainActivity : ComponentActivity() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
             requestPermissions(arrayOf(Manifest.permission.CAMERA), CAMERA_PERMISSION_CODE)
         } else {
-
+            val sharedPreferenceManager = SharedPreferenceManager(this)
+            sharedPreferenceManager.isCameraPermissionGranted = true
+            requestNotificationPermission()
         }
     }
 
@@ -79,36 +89,36 @@ class MainActivity : ComponentActivity() {
                 data = Uri.fromParts("package", packageName, null)
             }
             startActivity(intent)
+        } else{
+            val sharedPreferenceManager = SharedPreferenceManager(this)
+            sharedPreferenceManager.isNotificationPermissionGranted = true
         }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        val sharedPreferenceManager = SharedPreferenceManager(this)
         when (requestCode) {
             LOCATION_PERMISSION_CODE -> {
-                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    checkCameraPermission()
-                } else {
-                    checkCameraPermission()
-                }
+                val sharedPreferenceManager = SharedPreferenceManager(this)
+                sharedPreferenceManager.isLocationPermissionGranted = grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                checkCameraPermission()
             }
             CAMERA_PERMISSION_CODE -> {
-                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    Toast.makeText(this, "Enable Notification Permission", Toast.LENGTH_SHORT).show()
-                   requestNotificationPermission()
-                } else {
-                    Toast.makeText(this, "Enable Notification Permission", Toast.LENGTH_SHORT).show()
-                    requestNotificationPermission()
-                }
+                val sharedPreferenceManager = SharedPreferenceManager(this)
+                sharedPreferenceManager.isCameraPermissionGranted = grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                Toast.makeText(this, "Enable Notification Permission", Toast.LENGTH_SHORT).show()
+                requestNotificationPermission()
             }
             NOTIFICATION_PERMISSION_CODE -> {
-                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                } else {
-                }
+                val sharedPreferenceManager = SharedPreferenceManager(this)
+                sharedPreferenceManager.isNotificationPermissionGranted = grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED
             }
         }
     }
-
-
+    private fun logPermissionValues() {
+        val sharedPreferenceManager = SharedPreferenceManager(this)
+        Log.d("Permissions-state", "Location Permission Granted: ${sharedPreferenceManager.isLocationPermissionGranted}")
+        Log.d("Permissions-state", "Camera Permission Granted: ${sharedPreferenceManager.isCameraPermissionGranted}")
+        Log.d("Permissions-state", "Notification Permission Granted: ${sharedPreferenceManager.isNotificationPermissionGranted}")
+    }
 }

@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 
 class SharedPreferenceManager(context: Context) {
     private val prefs: SharedPreferences = context.getSharedPreferences("Login", Context.MODE_PRIVATE)
+    private val editor: SharedPreferences.Editor = prefs.edit()
 
     var isLoggedIn: Boolean
         get() = prefs.getBoolean("isLoggedIn", false)
@@ -30,9 +31,22 @@ class SharedPreferenceManager(context: Context) {
         return userDetails
     }
 
-    val LOCATION_PERMISSION_KEY = "location_permission"
-    fun isLocationPermissionGranted(): Boolean {
-        return prefs.getBoolean(LOCATION_PERMISSION_KEY, false)
-    }
+    var isLocationPermissionGranted: Boolean
+        get() = prefs.getBoolean("IsLocationPermissionGranted", false)
+        set(value) {
+            editor.putBoolean("IsLocationPermissionGranted", value).apply()
+        }
+
+    var isCameraPermissionGranted: Boolean
+        get() = prefs.getBoolean("IsCameraPermissionGranted", false)
+        set(value) {
+            editor.putBoolean("IsCameraPermissionGranted", value).apply()
+        }
+
+    var isNotificationPermissionGranted: Boolean
+        get() = prefs.getBoolean("IsNotificationPermissionGranted", false)
+        set(value) {
+            editor.putBoolean("IsNotificationPermissionGranted", value).apply()
+        }
 
 }
