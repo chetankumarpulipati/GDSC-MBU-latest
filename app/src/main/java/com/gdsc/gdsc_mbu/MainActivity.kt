@@ -1,5 +1,6 @@
 package com.gdsc.gdsc_mbu
 
+import Register
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -17,6 +18,7 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import registerUser
 
 class MainActivity : ComponentActivity() {
     private val authViewModel: AuthViewModel by viewModels()
@@ -45,7 +47,7 @@ class MainActivity : ComponentActivity() {
     fun AppNavigator(isLoggedIn: Boolean) {
         val navController = rememberNavController()
 
-        NavHost(navController, startDestination = if (isLoggedIn) "Menu" else "LoginScreen") {
+        NavHost(navController, startDestination = if (isLoggedIn) "Menu" else "WelcomeScreen") {
             composable("LoginScreen") {
                 LoginScreen(navController, authViewModel, ::loginWithEmail, this@MainActivity)
             }
@@ -54,6 +56,12 @@ class MainActivity : ComponentActivity() {
             }
             composable("home") {
                 HomeScreen(navController)
+            }
+            composable("register") {
+                Register(navController, ::registerUser, this@MainActivity)
+            }
+            composable("WelcomeScreen") {
+                WelcomeScreen(navController)
             }
         }
     }

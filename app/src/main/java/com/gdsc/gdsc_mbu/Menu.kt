@@ -72,12 +72,12 @@ fun Menu() {
                         modifier = Modifier.fillMaxWidth(),
                     ) {
                         Image(
-                            painter = painterResource(id = R.drawable.gdsc_logo), // Replace with your image resource
+                            painter = painterResource(id = R.drawable.gdsc_circular_logo),
                             contentDescription = "App Logo",
                             modifier = Modifier
                                 .padding(start = 110.dp)
-                                .height(50.dp)
-                                .width(50.dp)
+                                .height(40.dp)
+                                .width(40.dp)
                         )
                         Text(
                             text = "GDSC MBU",

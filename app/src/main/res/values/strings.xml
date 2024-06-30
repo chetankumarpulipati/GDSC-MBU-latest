@@ -4,4 +4,6 @@
     <string name="password_label">Password</string>
     <string name="login_button_label">Login</string>
     <string name="chevron_menu">">"</string>
+    <string name="name_label">Name</string>
+    <string name="register_button_label">Register</string>
 </resources>

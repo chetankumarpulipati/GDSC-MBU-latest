@@ -1,18 +1,12 @@
-package com.gdsc.gdsc_mbu
 
 import android.content.Context
-import android.content.Intent
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
+import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
@@ -33,11 +27,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -47,72 +38,50 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.gdsc.gdsc_mbu.R
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.auth.userProfileChangeRequest
 import com.google.firebase.ktx.Firebase
 
-fun loginWithEmail(email: String, password: String, navController: NavController, context: Context) {
-    val auth = Firebase.auth
-
-    auth.signInWithEmailAndPassword(email, password)
-        .addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val user = auth.currentUser
-                val userEmail = user?.email.toString()
-                Log.d("Login", "Sign in successful with email: $userEmail")
-
-                val sharedPreferenceManager = SharedPreferenceManager(context)
-                sharedPreferenceManager.isLoggedIn = true
-                sharedPreferenceManager.userEmail = userEmail
-
-                val intent = Intent(context, WelcomeActivity::class.java)
-                context.startActivity(intent)
-
-                Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
-
-            } else {
-                val exception = task.exception
-                if (exception is FirebaseAuthInvalidCredentialsException || exception is FirebaseAuthInvalidUserException) {
-                    Toast.makeText(context, "Invalid email or password", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(context, "Sign in failed", Toast.LENGTH_SHORT).show()
-                }
-                println("Sign in failed")
-            }
-        }
-}
 
 @Composable
-fun LoginScreen(navController: NavController, authViewModel: AuthViewModel, onLogin: (String, String, NavController, Context) -> Unit, context: Context) {
+fun Register(navController: NavController, onRegister: (String, String, String, NavController, Context) -> Unit, context: Context) {
+    var name by rememberSaveable { mutableStateOf("") }
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     var isProcessing by remember { mutableStateOf(false) }
+    val nameLabel = stringResource(R.string.name_label)
     val emailLabel = stringResource(R.string.email_label)
     val passwordLabel = stringResource(R.string.password_label)
-    val loginButtonLabel = stringResource(R.string.login_button_label)
+    val registerButtonLabel = stringResource(R.string.register_button_label)
     val keyboardController = LocalSoftwareKeyboardController.current
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .offset(y = 50.dp)
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.gdsc_logo),
-            contentDescription = "GDSC LOGO",
-            modifier = Modifier
-                .width(100.dp)
-                .clip(CircleShape)
-                .border(2.dp, Color.White, CircleShape)
-        )
         Text(
-            text = "Login",
+            text = "Register",
             style = MaterialTheme.typography.h4,
             modifier = Modifier.padding(16.dp)
+        )
+        OutlinedTextField(
+            value = name,
+            onValueChange = { name = it },
+            label = { Text(nameLabel) },
+            modifier = Modifier
+                .fillMaxWidth(0.8f)
+                .padding(top = 16.dp)
+                .onFocusChanged { focusState ->
+                    if (!focusState.isFocused) {
+                        keyboardController?.hide()
+                    }
+                },
+            singleLine = true,
+            shape = RoundedCornerShape(12.dp)
         )
         OutlinedTextField(
             value = email,
@@ -126,6 +95,7 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel, onLo
                         keyboardController?.hide()
                     }
                 },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             singleLine = true,
             shape = RoundedCornerShape(12.dp)
         )
@@ -135,12 +105,7 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel, onLo
             label = { Text(passwordLabel) },
             modifier = Modifier
                 .fillMaxWidth(0.8f)
-                .padding(top = 16.dp)
-                .onFocusChanged { focusState ->
-                    if (!focusState.isFocused) {
-                        keyboardController?.hide()
-                    }
-                },
+                .padding(top = 16.dp),
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             trailingIcon = {
@@ -159,13 +124,13 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel, onLo
         }
         Button(
             onClick = {
-                if (email.isBlank() || password.isBlank()) {
+                if (name.isBlank() || email.isBlank() || password.isBlank()) {
                     Toast.makeText(
                         context,
-                        "Please enter both email and password",
+                        "Please fill out all fields",
                         Toast.LENGTH_SHORT
                     ).show()
-                } else if (!email.endsWith("@gmail.com")) {
+                } else if (!email.contains("@")) {
                     Toast.makeText(
                         context,
                         "Please enter a valid email",
@@ -173,61 +138,57 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel, onLo
                     ).show()
                 } else {
                     isProcessing = true
-                    onLogin(email, password, navController, context)
+                    onRegister(name, email, password, navController, context)
                 }
             },
             modifier = Modifier
                 .fillMaxWidth(0.8f)
                 .padding(top = if (isProcessing) 20.dp else 50.dp)
         ) {
-            Text(loginButtonLabel)
-        }
-
-        Text(text = "OR", modifier = Modifier.padding(top = 16.dp))
-
-        Button(
-            onClick = {
-//                try {
-//                    navController.navigate("register")
-//                } catch (exception: Exception) {
-//                    Log.e("Navigation", "Error navigating to register screen", exception)
-//                }
-            },
-            modifier = Modifier
-                .fillMaxWidth(0.8f)
-                .padding(top = 16.dp)
-        ) {
-            Text("Sign in with Facebook")
-        }
-
-        Button(
-            onClick = {
-//                try {
-//                    navController.navigate("register")
-//                } catch (exception: Exception) {
-//                    Log.e("Navigation", "Error navigating to register screen", exception)
-//                }
-            },
-            modifier = Modifier
-                .fillMaxWidth(0.8f)
-                .padding(top = 16.dp)
-        ) {
-            Text("Sign in with Google")
+            Text(registerButtonLabel)
         }
         ClickableText(
-            text = AnnotatedString.Builder("Don't have an account? Sign up").apply {
+            text = AnnotatedString.Builder("Already have an account? Sign in").apply {
                 addStyle(
                     style = SpanStyle(textDecoration = TextDecoration.Underline),
-                    start = 23,
-                    end = 29
+                    start = 25,
+                    end = 32
                 )
             }.toAnnotatedString(),
             onClick = { offset ->
-                if (offset >= 23 && offset <= 29) {
-                    navController.navigate("register")
+                if (offset >= 25 && offset <= 32) {
+                    navController.navigate("LoginScreen")
                 }
             },
             modifier = Modifier.padding(top = 16.dp)
         )
     }
 }
+fun registerUser(name: String, email: String, password: String, navController: NavController, context: Context) {
+    val auth = Firebase.auth
+    val builder = AlertDialog.Builder(context)
+
+    auth.createUserWithEmailAndPassword(email, password)
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val user = auth.currentUser
+                user?.let {
+                    val profileUpdates = userProfileChangeRequest {
+                        displayName = name
+                    }
+                    it.updateProfile(profileUpdates)
+                        .addOnCompleteListener { profileUpdateTask ->
+                            if (profileUpdateTask.isSuccessful) {
+                                Log.d("Register", "User profile updated.")
+                            }
+                        }
+                }
+                Toast.makeText(context, "Registration successful", Toast.LENGTH_SHORT).show()
+
+            } else {
+                Toast.makeText(context, "Registration failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                println("Registration failed")
+            }
+        }
+}
+
