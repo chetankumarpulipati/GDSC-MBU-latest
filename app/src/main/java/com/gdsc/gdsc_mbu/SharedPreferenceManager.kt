@@ -11,6 +11,10 @@ class SharedPreferenceManager(context: Context) {
         get() = prefs.getBoolean("isLoggedIn", false)
         set(value) = prefs.edit().putBoolean("isLoggedIn", value).apply()
 
+    var googlePhotoUrl: String?
+        get() = prefs.getString("googlePhotoUrl", null)
+        set(value) = prefs.edit().putString("googlePhotoUrl", value).apply()
+
     var isUserSignedInWithGoogle: Boolean
         get() = prefs.getBoolean("isLoggedInGoogle", false)
         set(value) = prefs.edit().putBoolean("isLoggedInGoogle", value).apply()

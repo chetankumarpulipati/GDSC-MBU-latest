@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,7 +12,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.DrawerValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
@@ -40,6 +41,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -50,7 +52,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.gdsc.gdsc_mbu.ui.theme.lightred
+import coil.compose.rememberImagePainter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -62,6 +64,11 @@ fun Menu() {
     val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
     val scope = rememberCoroutineScope()
     val authViewModel: AuthViewModel = viewModel()
+    val sharedPrefManager = SharedPreferenceManager(LocalContext.current)
+    val userName = sharedPrefManager.getUserDetails()["name"].takeIf { !it.isNullOrEmpty() }
+        ?: sharedPrefManager.username
+        ?: "Jon Doe"
+    val imageUrl = sharedPrefManager.googlePhotoUrl
 
 
     Scaffold(
@@ -111,19 +118,29 @@ fun Menu() {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(lightred)
-                            .padding(25.dp) // Add top padding here
+//                            .background(lightred)
+                            .padding(20.dp)
                             .align(Alignment.CenterHorizontally)
                     ) {
                         Image(
-                            painter = painterResource(id = R.drawable.profile_sample),
+//                            painter = painterResource(id= R.drawable.profile_sample),
+                            painter = rememberImagePainter(
+                                data = imageUrl ?: R.drawable.profile_sample,
+                                builder = {
+                                    crossfade(true)
+                                    placeholder(R.drawable.profile_sample)
+                                    error(R.drawable.profile_sample)
+                                }
+                            ),
                             contentDescription = "profile picture",
                             modifier = Modifier
                                 .align(Alignment.Center)
+                                .size(100.dp)
+                                .clip(CircleShape)
                         )
                     }
                     Text(
-                        text = "John Doe",
+                        text = userName,
                         modifier = Modifier
                             .padding(16.dp)
                             .align(Alignment.CenterHorizontally), // Center text horizontally

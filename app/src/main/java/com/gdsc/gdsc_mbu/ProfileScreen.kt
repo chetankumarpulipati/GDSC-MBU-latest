@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -17,13 +19,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
 
 @Composable
 fun ProfileScreen(navController: NavController, authViewModel: AuthViewModel) {
@@ -37,6 +40,7 @@ fun ProfileScreen(navController: NavController, authViewModel: AuthViewModel) {
     val userMobile = sharedPrefManager.getUserDetails()["mobile"] ?: "Mobile number not available"
     val userRoll = sharedPrefManager.getUserDetails()["roll"] ?: "Roll number not available"
     val userCollege = sharedPrefManager.getUserDetails()["college"] ?: "College name not available"
+    val imageUrl = sharedPrefManager.googlePhotoUrl
 
     Column(
         modifier = Modifier
@@ -52,9 +56,20 @@ fun ProfileScreen(navController: NavController, authViewModel: AuthViewModel) {
                 .align(Alignment.CenterHorizontally)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.profile_sample),
+//                            painter = painterResource(id= R.drawable.profile_sample),
+                painter = rememberImagePainter(
+                    data = imageUrl ?: R.drawable.profile_sample,
+                    builder = {
+                        crossfade(true)
+                        placeholder(R.drawable.profile_sample)
+                        error(R.drawable.profile_sample)
+                    }
+                ),
                 contentDescription = "profile picture",
-                modifier = Modifier.align(Alignment.Center)
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(100.dp)
+                    .clip(CircleShape)
             )
         }
         Spacer(modifier = Modifier.height(16.dp))

@@ -127,11 +127,15 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel, onLo
                     .addOnCompleteListener { signInTask ->
                         if (signInTask.isSuccessful) {
                             val google_user = auth.currentUser
-                            val google_user_email = google_user?.email.toString()
+                            val google_user_email = google_user?.email
+                            val google_photo_url = google_user?.photoUrl
+                            Log.d("GoogleProfile", "Google Profile URL: $google_photo_url")
                             sharedPreferenceManager.isLoggedIn = true
                             sharedPreferenceManager.isUserSignedInWithGoogle = true
                             sharedPreferenceManager.username = google_user?.displayName.toString()
-                            sharedPreferenceManager.userEmail = google_user_email
+                            sharedPreferenceManager.userEmail = google_user_email.toString()
+                            sharedPreferenceManager.googlePhotoUrl = google_photo_url.toString()
+                            Log.d("LoginCheck", "Google sign-in successful with email: $google_user_email")
                             val intent = Intent(context, WelcomeActivity::class.java)
                             context.startActivity(intent)
                         } else {
