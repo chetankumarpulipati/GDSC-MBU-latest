@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -36,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -47,8 +50,14 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
@@ -92,7 +101,51 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel, onLo
     val emailLabel = stringResource(R.string.email_label)
     val passwordLabel = stringResource(R.string.password_label)
     val loginButtonLabel = stringResource(R.string.login_button_label)
+    val sharedPreferenceManager = SharedPreferenceManager(context)
     val keyboardController = LocalSoftwareKeyboardController.current
+    val auth = FirebaseAuth.getInstance()
+    var googleSignInClient: GoogleSignInClient? by remember { mutableStateOf(null) }
+    val context = LocalContext.current
+
+    if (googleSignInClient == null) {
+        googleSignInClient = GoogleSignIn.getClient(
+            context,
+            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(context.getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build()
+        )
+    }
+
+    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) { result ->
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            if (account != null) {
+                val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+                auth.signInWithCredential(credential)
+                    .addOnCompleteListener { signInTask ->
+                        if (signInTask.isSuccessful) {
+                            val user = auth.currentUser
+                            sharedPreferenceManager.isLoggedIn = true
+                            val intent = Intent(context, WelcomeActivity::class.java)
+                            context.startActivity(intent)
+                        } else {
+                            Log.d("LoginCheck", "Google sign-in failed: ${signInTask.exception}")
+                            Toast.makeText(context, "Google sign-in failed", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+            }
+        } catch (e: ApiException) {
+            Log.d("LoginCheck", "Google sign-in failed: ${e.message}")
+            Toast.makeText(context, "Google sign-in failed: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    val signInWithGoogle = {
+        val signInIntent = googleSignInClient?.signInIntent
+        launcher.launch(signInIntent)
+    }
 
     Column(
         modifier = Modifier
@@ -199,14 +252,9 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel, onLo
         ) {
             Text("Sign in with Facebook")
         }
-
         Button(
             onClick = {
-//                try {
-//                    navController.navigate("register")
-//                } catch (exception: Exception) {
-//                    Log.e("Navigation", "Error navigating to register screen", exception)
-//                }
+                signInWithGoogle()
             },
             modifier = Modifier
                 .fillMaxWidth(0.8f)

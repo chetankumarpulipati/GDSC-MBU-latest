@@ -2,7 +2,8 @@ package com.gdsc.gdsc_mbu
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class AuthViewModel(application: Application) : AndroidViewModel(application) {
     private val sharedPreferenceManager = SharedPreferenceManager(application)
@@ -14,7 +15,8 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         }
 
     fun logout() {
-        FirebaseAuth.getInstance().signOut()
+//        FirebaseAuth.getInstance().signOut()
+        Firebase.auth.signOut()
         isLoggedIn = false
     }
 }

@@ -13,6 +13,7 @@ material3Compose = "1.0.0-alpha01"
 ui = "1.6.3"
 googleServices = "4.4.1"
 firebaseAuth = "22.3.1"
+googleGmsGoogleServices = "4.4.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -38,4 +39,5 @@ firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+googleGmsGoogleServices = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
 

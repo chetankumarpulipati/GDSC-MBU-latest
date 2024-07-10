@@ -39,14 +39,16 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.userProfileChangeRequest
 import com.google.firebase.ktx.Firebase
 
 @Composable
-fun Register(navController: NavController, onRegister: (String, String, String, NavController, Context) -> Unit, context: Context) {
+fun Register(navController: NavController, onRegister: (String, String, String, NavController, Context) -> Unit, context: Context,
+             isRefreshing: Boolean,
+             onRefresh: () -> Unit,
+             content: @Composable () -> Unit
+) {
     var name by rememberSaveable { mutableStateOf("") }
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
@@ -58,15 +60,6 @@ fun Register(navController: NavController, onRegister: (String, String, String, 
     val registerButtonLabel = stringResource(R.string.register_button_label)
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    SwipeRefresh(
-        state = rememberSwipeRefreshState(isRefreshing = isProcessing),
-        onRefresh = {
-            name = ""
-            email = ""
-            password = ""
-            isProcessing = false
-        }
-    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -173,8 +166,8 @@ fun Register(navController: NavController, onRegister: (String, String, String, 
                 modifier = Modifier.padding(top = 16.dp)
             )
         }
-    }
 }
+
 fun registerUser(name: String, email: String, password: String, navController: NavController, context: Context) {
     val auth = Firebase.auth
     val builder = AlertDialog.Builder(context)

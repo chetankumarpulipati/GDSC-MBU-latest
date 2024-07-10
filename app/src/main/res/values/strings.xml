@@ -6,4 +6,5 @@
     <string name="chevron_menu">">"</string>
     <string name="name_label">Name</string>
     <string name="register_button_label">Register</string>
+    <string name="default_web_client_id">Sign in with Google</string>
 </resources>
