@@ -1,5 +1,6 @@
 package com.gdsc.gdsc_mbu
 
+import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -255,6 +256,27 @@ fun BodyContent(modifier: Modifier = Modifier) {
 
 }
 
+fun clearAppData(context: Context) {
+    // Clear SharedPreferences
+    val sharedPreferences = context.getSharedPreferences("YourSharedPreferencesName", Context.MODE_PRIVATE)
+    sharedPreferences.edit().clear().apply()
+
+    // Delete Internal Storage Files
+    context.filesDir.deleteRecursively()
+
+    // Delete External Storage Files (if your app uses external storage)
+    context.getExternalFilesDir(null)?.deleteRecursively()
+
+    // Clear databases
+    context.databaseList().forEach { databaseName ->
+        context.deleteDatabase(databaseName)
+    }
+
+    // Clear cache directory
+    context.cacheDir.deleteRecursively()
+
+}
+
 @Composable
 fun onLogout(navController: NavController, authViewModel: AuthViewModel){
     val context = LocalContext.current
@@ -266,7 +288,9 @@ fun onLogout(navController: NavController, authViewModel: AuthViewModel){
 //        }
 //        context.startActivity(intent)
 
-        val intent = Intent(context, MainActivity::class.java)
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+        }
         context.startActivity(intent)
     } catch (e: Exception) {
         Log.e("LogoutButton", "Error during logout", e)

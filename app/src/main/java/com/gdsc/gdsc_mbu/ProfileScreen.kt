@@ -29,8 +29,11 @@ import androidx.navigation.NavController
 fun ProfileScreen(navController: NavController, authViewModel: AuthViewModel) {
     val scrollState = rememberScrollState()
     val sharedPrefManager = SharedPreferenceManager(LocalContext.current)
-    val userEmail = sharedPrefManager.userEmail ?: return
-    val userName = sharedPrefManager.getUserDetails()["name"] ?: "Name not available"
+    val userEmail = sharedPrefManager.userEmail ?: "Email not available"
+//    val userName = sharedPrefManager.getUserDetails()["name"] ?: "Name not available"
+    val userName = sharedPrefManager.getUserDetails()["name"].takeIf { !it.isNullOrEmpty() }
+        ?: sharedPrefManager.username
+        ?: "Name not available"
     val userMobile = sharedPrefManager.getUserDetails()["mobile"] ?: "Mobile number not available"
     val userRoll = sharedPrefManager.getUserDetails()["roll"] ?: "Roll number not available"
     val userCollege = sharedPrefManager.getUserDetails()["college"] ?: "College name not available"
@@ -56,7 +59,7 @@ fun ProfileScreen(navController: NavController, authViewModel: AuthViewModel) {
         }
         Spacer(modifier = Modifier.height(16.dp))
         ProfileItem(title = "Full Name", value = userName)
-        ProfileItem(title = "Email Id", value = userEmail)
+        ProfileItem(title = "Email Id", value = userEmail )
         ProfileItem(title = "Mobile Number", value = "+91 "+userMobile)
         ProfileItem(title = "University/College", value = userCollege)
         ProfileItem(title = "Roll Number", value = userRoll)

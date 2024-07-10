@@ -1,6 +1,7 @@
 package com.gdsc.gdsc_mbu
 
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import androidx.activity.ComponentActivity
@@ -17,6 +18,13 @@ class WelcomeActivity : ComponentActivity() {
         val rollNumber: EditText = findViewById(R.id.welcome_roll_number)
         val collegeName: EditText = findViewById(R.id.welcome_college)
         val sharedPreferenceManager = SharedPreferenceManager(this)
+
+        val isSignedInWithGoogle = sharedPreferenceManager.isUserSignedInWithGoogle
+        if (isSignedInWithGoogle) {
+            welcomeName.visibility = View.GONE
+        } else {
+            welcomeName.visibility = View.VISIBLE
+        }
 
         proceedButton.setOnClickListener {
             val userDetails = mutableMapOf<String, String>()
