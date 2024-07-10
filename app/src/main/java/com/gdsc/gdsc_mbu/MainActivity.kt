@@ -1,6 +1,5 @@
 package com.gdsc.gdsc_mbu
 
-import Register
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -18,7 +17,7 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import registerUser
+
 
 class MainActivity : ComponentActivity() {
     private val authViewModel: AuthViewModel by viewModels()

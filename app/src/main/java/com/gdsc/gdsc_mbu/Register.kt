@@ -1,3 +1,4 @@
+package  com.gdsc.gdsc_mbu
 
 import android.content.Context
 import android.util.Log
@@ -38,11 +39,11 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.gdsc.gdsc_mbu.R
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.userProfileChangeRequest
 import com.google.firebase.ktx.Firebase
-
 
 @Composable
 fun Register(navController: NavController, onRegister: (String, String, String, NavController, Context) -> Unit, context: Context) {
@@ -57,111 +58,121 @@ fun Register(navController: NavController, onRegister: (String, String, String, 
     val registerButtonLabel = stringResource(R.string.register_button_label)
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+    SwipeRefresh(
+        state = rememberSwipeRefreshState(isRefreshing = isProcessing),
+        onRefresh = {
+            name = ""
+            email = ""
+            password = ""
+            isProcessing = false
+        }
     ) {
-        Text(
-            text = "Register",
-            style = MaterialTheme.typography.h4,
-            modifier = Modifier.padding(16.dp)
-        )
-        OutlinedTextField(
-            value = name,
-            onValueChange = { name = it },
-            label = { Text(nameLabel) },
+        Column(
             modifier = Modifier
-                .fillMaxWidth(0.8f)
-                .padding(top = 16.dp)
-                .onFocusChanged { focusState ->
-                    if (!focusState.isFocused) {
-                        keyboardController?.hide()
-                    }
-                },
-            singleLine = true,
-            shape = RoundedCornerShape(12.dp)
-        )
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text(emailLabel) },
-            modifier = Modifier
-                .fillMaxWidth(0.8f)
-                .padding(top = 16.dp)
-                .onFocusChanged { focusState ->
-                    if (!focusState.isFocused) {
-                        keyboardController?.hide()
-                    }
-                },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            singleLine = true,
-            shape = RoundedCornerShape(12.dp)
-        )
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text(passwordLabel) },
-            modifier = Modifier
-                .fillMaxWidth(0.8f)
-                .padding(top = 16.dp),
-            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            trailingIcon = {
-                IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                    Icon(
-                        if (passwordVisible) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
-                        contentDescription = "Toggle password visibility"
-                    )
-                }
-            },
-            singleLine = true,
-            shape = RoundedCornerShape(12.dp)
-        )
-        if (isProcessing) {
-            Text("Processing...", modifier = Modifier.padding(top = 16.dp))
-        }
-        Button(
-            onClick = {
-                if (name.isBlank() || email.isBlank() || password.isBlank()) {
-                    Toast.makeText(
-                        context,
-                        "Please fill out all fields",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else if (!email.contains("@")) {
-                    Toast.makeText(
-                        context,
-                        "Please enter a valid email",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    isProcessing = true
-                    onRegister(name, email, password, navController, context)
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth(0.8f)
-                .padding(top = if (isProcessing) 20.dp else 50.dp)
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(registerButtonLabel)
+            Text(
+                text = "Register",
+                style = MaterialTheme.typography.h4,
+                modifier = Modifier.padding(16.dp)
+            )
+            OutlinedTextField(
+                value = name,
+                onValueChange = { name = it },
+                label = { Text(nameLabel) },
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .padding(top = 16.dp)
+                    .onFocusChanged { focusState ->
+                        if (!focusState.isFocused) {
+                            keyboardController?.hide()
+                        }
+                    },
+                singleLine = true,
+                shape = RoundedCornerShape(12.dp)
+            )
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                label = { Text(emailLabel) },
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .padding(top = 16.dp)
+                    .onFocusChanged { focusState ->
+                        if (!focusState.isFocused) {
+                            keyboardController?.hide()
+                        }
+                    },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                singleLine = true,
+                shape = RoundedCornerShape(12.dp)
+            )
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text(passwordLabel) },
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .padding(top = 16.dp),
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                trailingIcon = {
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        Icon(
+                            if (passwordVisible) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
+                            contentDescription = "Toggle password visibility"
+                        )
+                    }
+                },
+                singleLine = true,
+                shape = RoundedCornerShape(12.dp)
+            )
+            if (isProcessing) {
+                Text("Processing...", modifier = Modifier.padding(top = 16.dp))
+            }
+            Button(
+                onClick = {
+                    if (name.isBlank() || email.isBlank() || password.isBlank()) {
+                        Toast.makeText(
+                            context,
+                            "Please fill out all fields",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else if (!email.contains("@")) {
+                        Toast.makeText(
+                            context,
+                            "Please enter a valid email",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        isProcessing = true
+                        onRegister(name, email, password, navController, context)
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .padding(top = if (isProcessing) 20.dp else 50.dp)
+            ) {
+                Text(registerButtonLabel)
+            }
+            ClickableText(
+                text = AnnotatedString.Builder("Already have an account? Sign in").apply {
+                    addStyle(
+                        style = SpanStyle(textDecoration = TextDecoration.Underline),
+                        start = 25,
+                        end = 32
+                    )
+                }.toAnnotatedString(),
+                onClick = { offset ->
+                    if (offset >= 25 && offset <= 32) {
+                        navController.navigate("LoginScreen")
+                    }
+                },
+                modifier = Modifier.padding(top = 16.dp)
+            )
         }
-        ClickableText(
-            text = AnnotatedString.Builder("Already have an account? Sign in").apply {
-                addStyle(
-                    style = SpanStyle(textDecoration = TextDecoration.Underline),
-                    start = 25,
-                    end = 32
-                )
-            }.toAnnotatedString(),
-            onClick = { offset ->
-                if (offset >= 25 && offset <= 32) {
-                    navController.navigate("LoginScreen")
-                }
-            },
-            modifier = Modifier.padding(top = 16.dp)
-        )
     }
 }
 fun registerUser(name: String, email: String, password: String, navController: NavController, context: Context) {
@@ -184,7 +195,7 @@ fun registerUser(name: String, email: String, password: String, navController: N
                         }
                 }
                 Toast.makeText(context, "Registration successful", Toast.LENGTH_SHORT).show()
-
+                navController.navigate("LoginScreen")
             } else {
                 Toast.makeText(context, "Registration failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                 println("Registration failed")
