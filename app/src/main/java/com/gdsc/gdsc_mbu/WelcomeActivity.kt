@@ -18,8 +18,8 @@ class WelcomeActivity : ComponentActivity() {
         val rollNumber: EditText = findViewById(R.id.welcome_roll_number)
         val collegeName: EditText = findViewById(R.id.welcome_college)
         val sharedPreferenceManager = SharedPreferenceManager(this)
-
         val isSignedInWithGoogle = sharedPreferenceManager.isUserSignedInWithGoogle
+
         if (isSignedInWithGoogle) {
             welcomeName.visibility = View.GONE
         } else {
@@ -51,8 +51,11 @@ class WelcomeActivity : ComponentActivity() {
                 return@setOnClickListener
             }
             sharedPreferenceManager.saveUserDetails(userDetails)
-            setContent {
-                Menu()
+            if (sharedPreferenceManager.isUserDetailsCompleted) {
+                setContent {
+                    Menu()
+                }
+                return@setOnClickListener // Exit onCreate to prevent showing the welcome screen
             }
         }
     }

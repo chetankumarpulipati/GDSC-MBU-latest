@@ -66,43 +66,57 @@ class MainActivity : ComponentActivity() {
           navController.navigate("Menu")
         }
         else{
-          navController.navigate("LoginScreen")
+          navController.navigate("WelcomeScreen")
         }
     }
 
     private fun checkPermissions() {
-        locationPermission()
+        val sharedPreferenceManager = SharedPreferenceManager(this)
+        if (!sharedPreferenceManager.isLocationPermissionRequested) {
+            locationPermission()
+        } else {
+            // If location permission was already requested, check camera permission directly
+            checkCameraPermission()
+        }
     }
 
+
     private fun locationPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
+        val sharedPreferenceManager = SharedPreferenceManager(this)
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            sharedPreferenceManager.isLocationPermissionRequested = true
             requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_CODE)
         } else {
-            val sharedPreferenceManager = SharedPreferenceManager(this)
             sharedPreferenceManager.isLocationPermissionGranted = true
             checkCameraPermission()
         }
     }
 
     private fun checkCameraPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
-            requestPermissions(arrayOf(Manifest.permission.CAMERA), CAMERA_PERMISSION_CODE)
-        } else {
-            val sharedPreferenceManager = SharedPreferenceManager(this)
-            sharedPreferenceManager.isCameraPermissionGranted = true
-            requestNotificationPermission()
+        val sharedPreferenceManager = SharedPreferenceManager(this)
+        if (!sharedPreferenceManager.isCameraPermissionRequested) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                sharedPreferenceManager.isCameraPermissionRequested = true
+                requestPermissions(arrayOf(Manifest.permission.CAMERA), CAMERA_PERMISSION_CODE)
+            } else {
+                sharedPreferenceManager.isCameraPermissionGranted = true
+                requestNotificationPermission()
+            }
         }
     }
 
     fun requestNotificationPermission() {
+        val sharedPreferenceManager = SharedPreferenceManager(this)
         val areNotificationsEnabled = NotificationManagerCompat.from(this).areNotificationsEnabled()
-        if (!areNotificationsEnabled) {
+        val isNotificationPermissionRequested = sharedPreferenceManager.isNotificationPermissionRequested
+
+        if (!areNotificationsEnabled && !isNotificationPermissionRequested) {
             val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                 data = Uri.fromParts("package", packageName, null)
             }
             startActivity(intent)
-        } else{
-            val sharedPreferenceManager = SharedPreferenceManager(this)
+            sharedPreferenceManager.isNotificationPermissionRequested = true
+        } else if (areNotificationsEnabled) {
             sharedPreferenceManager.isNotificationPermissionGranted = true
         }
     }
