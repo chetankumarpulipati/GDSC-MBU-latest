@@ -45,8 +45,7 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun AppNavigator(isLoggedIn: Boolean) {
         val navController = rememberNavController()
-
-        NavHost(navController, startDestination = if (isLoggedIn) "Menu" else "WelcomeScreen") {
+        NavHost(navController, startDestination = "Menu") {
             composable("LoginScreen") {
                 LoginScreen(navController, authViewModel, ::loginWithEmail, this@MainActivity)
             }
@@ -62,6 +61,12 @@ class MainActivity : ComponentActivity() {
             composable("WelcomeScreen") {
                 WelcomeScreen(navController)
             }
+        }
+        if(isLoggedIn){
+          navController.navigate("Menu")
+        }
+        else{
+          navController.navigate("LoginScreen")
         }
     }
 

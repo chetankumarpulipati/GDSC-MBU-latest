@@ -261,9 +261,12 @@ fun onLogout(navController: NavController, authViewModel: AuthViewModel){
     try {
         authViewModel.logout()
         Log.d("LogoutButton", "Logged out successfully")
-        val intent = Intent(context, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-        }
+//        val intent = Intent(context, MainActivity::class.java).apply {
+//            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+//        }
+//        context.startActivity(intent)
+
+        val intent = Intent(context, MainActivity::class.java)
         context.startActivity(intent)
     } catch (e: Exception) {
         Log.e("LogoutButton", "Error during logout", e)
