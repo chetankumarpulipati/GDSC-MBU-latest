@@ -140,7 +140,7 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel, onLo
                             context.startActivity(intent)
                         } else {
                             Log.d("LoginCheck", "Google sign-in failed: ${signInTask.exception}")
-                            Toast.makeText(context, "Google sign-in failed", Toast.LENGTH_SHORT).show()
+//                            Toast.makeText(context, "Google sign-in failed", Toast.LENGTH_SHORT).show()
                         }
                     }
             }

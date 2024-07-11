@@ -1,9 +1,7 @@
 package  com.gdsc.gdsc_mbu
 
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,8 +26,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -39,16 +35,11 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.auth.userProfileChangeRequest
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.auth.FirebaseAuth
+
 
 @Composable
-fun Register(navController: NavController, onRegister: (String, String, String, NavController, Context) -> Unit, context: Context,
-             isRefreshing: Boolean,
-             onRefresh: () -> Unit,
-             content: @Composable () -> Unit
-) {
+fun Register(navController: NavController, onRegister: (String, String, String, NavController, Context, () -> Unit) -> Unit, context: Context) {
     var name by rememberSaveable { mutableStateOf("") }
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
@@ -58,7 +49,6 @@ fun Register(navController: NavController, onRegister: (String, String, String, 
     val emailLabel = stringResource(R.string.email_label)
     val passwordLabel = stringResource(R.string.password_label)
     val registerButtonLabel = stringResource(R.string.register_button_label)
-    val keyboardController = LocalSoftwareKeyboardController.current
 
         Column(
             modifier = Modifier
@@ -77,12 +67,7 @@ fun Register(navController: NavController, onRegister: (String, String, String, 
                 label = { Text(nameLabel) },
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
-                    .padding(top = 16.dp)
-                    .onFocusChanged { focusState ->
-                        if (!focusState.isFocused) {
-                            keyboardController?.hide()
-                        }
-                    },
+                    .padding(top = 16.dp),
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp)
             )
@@ -92,12 +77,7 @@ fun Register(navController: NavController, onRegister: (String, String, String, 
                 label = { Text(emailLabel) },
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
-                    .padding(top = 16.dp)
-                    .onFocusChanged { focusState ->
-                        if (!focusState.isFocused) {
-                            keyboardController?.hide()
-                        }
-                    },
+                    .padding(top = 16.dp),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp)
@@ -141,7 +121,9 @@ fun Register(navController: NavController, onRegister: (String, String, String, 
                         ).show()
                     } else {
                         isProcessing = true
-                        onRegister(name, email, password, navController, context)
+                        onRegister(name, email, password, navController, context) {
+                            isProcessing = false // This callback will be called after the task is complete
+                        }
                     }
                 },
                 modifier = Modifier
@@ -168,30 +150,25 @@ fun Register(navController: NavController, onRegister: (String, String, String, 
         }
 }
 
-fun registerUser(name: String, email: String, password: String, navController: NavController, context: Context) {
-    val auth = Firebase.auth
-    val builder = AlertDialog.Builder(context)
+fun registerUser(
+    name: String,
+    email: String,
+    password: String,
+    navController: NavController,
+    context: Context,
+    onComplete: () -> Unit // Add this parameter
+) {
+    val auth = FirebaseAuth.getInstance()
 
     auth.createUserWithEmailAndPassword(email, password)
         .addOnCompleteListener { task ->
+            onComplete() // Call onComplete regardless of task success or failure
             if (task.isSuccessful) {
                 val user = auth.currentUser
-                user?.let {
-                    val profileUpdates = userProfileChangeRequest {
-                        displayName = name
-                    }
-                    it.updateProfile(profileUpdates)
-                        .addOnCompleteListener { profileUpdateTask ->
-                            if (profileUpdateTask.isSuccessful) {
-                                Log.d("Register", "User profile updated.")
-                            }
-                        }
-                }
                 Toast.makeText(context, "Registration successful", Toast.LENGTH_SHORT).show()
                 navController.navigate("LoginScreen")
             } else {
                 Toast.makeText(context, "Registration failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
-                println("Registration failed")
             }
         }
 }

@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
                 HomeScreen(navController)
             }
             composable("register") {
-                Register(navController, ::registerUser, this@MainActivity, isRefreshing = false, onRefresh = {}, content = {})
+                Register(navController, ::registerUser, this@MainActivity)
             }
             composable("WelcomeScreen") {
                 WelcomeScreen(navController)
