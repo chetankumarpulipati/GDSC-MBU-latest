@@ -8,6 +8,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -27,6 +29,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -92,6 +96,7 @@ fun loginWithEmail(email: String, password: String, navController: NavController
         }
 }
 
+
 @Composable
 fun LoginScreen(navController: NavController, authViewModel: AuthViewModel, onLogin: (String, String, NavController, Context) -> Unit, context: Context) {
     var email by rememberSaveable { mutableStateOf("") }
@@ -106,6 +111,12 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel, onLo
     val auth = FirebaseAuth.getInstance()
     var googleSignInClient: GoogleSignInClient? by remember { mutableStateOf(null) }
     val context = LocalContext.current
+    var showResetPasswordDialog by remember { mutableStateOf(false) }
+
+
+    fun toggleResetPasswordDialog() {
+        showResetPasswordDialog = !showResetPasswordDialog
+    }
 
     if (googleSignInClient == null) {
         googleSignInClient = GoogleSignIn.getClient(
@@ -146,7 +157,8 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel, onLo
             }
         } catch (e: ApiException) {
             Log.d("LoginCheck", "Google sign-in failed: ${e.message}")
-            Toast.makeText(context, "Google sign-in failed: ${e.message}", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(context, "Google sign-in failed: ${e.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Google sign-in failed", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -216,7 +228,7 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel, onLo
             shape = RoundedCornerShape(12.dp)
         )
         if (isProcessing) {
-            Text("Processing...", modifier = Modifier.padding(top = 16.dp))
+            CircularProgressIndicator(progress = 0.5f, modifier = Modifier.padding(top = 20.dp))
         }
         Button(
             onClick = {
@@ -243,6 +255,18 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel, onLo
         ) {
             Text(loginButtonLabel)
         }
+        ClickableText(
+            text = AnnotatedString.Builder("Forgot Password").apply {
+                addStyle(
+                    style = SpanStyle(textDecoration = TextDecoration.Underline),
+                    start = 0,
+                    end = "Forgot Password".length
+                )   }.toAnnotatedString(),
+            onClick = {
+
+                      },
+                    modifier = Modifier.padding(top = 10.dp)
+        )
 
         Text(text = "OR", modifier = Modifier.padding(top = 16.dp))
 
@@ -286,4 +310,74 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel, onLo
             modifier = Modifier.padding(top = 16.dp)
         )
     }
+}
+
+@Composable
+fun ForgotPasswordScreen() {
+    val context = LocalContext.current
+    val showDialog = remember { mutableStateOf(false) }
+    val emailState = remember { mutableStateOf("") }
+
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text(
+            text = "Forgot Password?",
+            modifier = Modifier
+                .clickable { showDialog.value = true }
+                .padding(8.dp)
+        )
+
+        if (showDialog.value) {
+            AlertDialog(
+                onDismissRequest = { showDialog.value = false },
+                title = { Text(text = "Forgot Password") },
+                text = {
+                    Column {
+                        Text("Enter your email address:")
+                        TextField(
+                            value = emailState.value,
+                            onValueChange = { emailState.value = it },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                            singleLine = true,
+                            modifier = Modifier.padding(top = 8.dp)
+                        )
+                    }
+                },
+                confirmButton = {
+                    Button(onClick = {
+                        val email = emailState.value.trim()
+                        if (email.isNotEmpty()) {
+
+                            showDialog.value = false
+                        } else {
+                            Toast.makeText(context, "Please enter a valid email address", Toast.LENGTH_SHORT).show()
+                        }
+                    }) {
+                        Text("Yes")
+                    }
+                },
+                dismissButton = {
+                    Button(onClick = {
+                        showDialog.value = false
+                    }) {
+                        Text("No")
+                    }
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun sendPasswordResetEmail(email: String, context: Context) {
+    val auth = Firebase.auth
+    auth.sendPasswordResetEmail(email)
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Toast.makeText(context, "Reset link sent to your email", Toast.LENGTH_LONG).show()
+            } else {
+                val errorMessage = task.exception?.localizedMessage
+                Toast.makeText(context, "Error: $errorMessage", Toast.LENGTH_LONG).show()
+                Log.e("ResetPassword", "Error: $errorMessage")
+            }
+        }
 }

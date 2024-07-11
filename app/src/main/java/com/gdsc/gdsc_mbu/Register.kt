@@ -18,6 +18,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,7 +37,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
-
 
 @Composable
 fun Register(navController: NavController, onRegister: (String, String, String, NavController, Context, () -> Unit) -> Unit, context: Context) {
@@ -103,7 +103,8 @@ fun Register(navController: NavController, onRegister: (String, String, String, 
                 shape = RoundedCornerShape(12.dp)
             )
             if (isProcessing) {
-                Text("Processing...", modifier = Modifier.padding(top = 16.dp))
+//                Text("Processing...", modifier = Modifier.padding(top = 16.dp))
+                CircularProgressIndicator(modifier = Modifier.padding(top = 16.dp))
             }
             Button(
                 onClick = {

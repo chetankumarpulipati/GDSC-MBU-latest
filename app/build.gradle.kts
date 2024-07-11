@@ -51,6 +51,8 @@ android {
 }
 
 dependencies {
+    implementation("androidx.compose.ui:ui-tooling-preview:1.0.0")
+    implementation("com.google.firebase:firebase-auth-ktx:21.0.1")
     implementation("io.coil-kt:coil-compose:1.4.0")
     implementation("com.google.android.gms:play-services-auth:20.2.0")
     implementation("com.google.firebase:firebase-auth:21.0.1")
