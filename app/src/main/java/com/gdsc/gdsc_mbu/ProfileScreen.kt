@@ -74,7 +74,7 @@ fun ProfileScreen(navController: NavController, authViewModel: AuthViewModel) {
         }
         Spacer(modifier = Modifier.height(16.dp))
         ProfileItem(title = "Full Name", value = userName)
-        ProfileItem(title = "Email Id", value = userEmail )
+        ProfileItem(title = "Email Id", value = userEmail)
         ProfileItem(title = "Mobile Number", value = "+91 "+userMobile)
         ProfileItem(title = "University/College", value = userCollege)
         ProfileItem(title = "Roll Number", value = userRoll)

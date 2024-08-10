@@ -53,6 +53,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberImagePainter
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -69,7 +73,6 @@ fun Menu() {
         ?: sharedPrefManager.username
         ?: "Jon Doe"
     val imageUrl = sharedPrefManager.googlePhotoUrl
-
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -295,11 +298,21 @@ fun clearAppData(context: Context) {
 }
 
 @Composable
-fun onLogout(navController: NavController, authViewModel: AuthViewModel){
+fun onLogout(navController: NavController, authViewModel: AuthViewModel) {
     val context = LocalContext.current
     try {
         authViewModel.logout()
         Log.d("LogoutButton", "Logged out successfully")
+
+        FirebaseAuth.getInstance().signOut()
+
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()
+        val googleSignInClient: GoogleSignInClient = GoogleSignIn.getClient(context, gso)
+        googleSignInClient.revokeAccess().addOnCompleteListener {
+            Log.d("LogoutButton", "Google access revoked")
+        }
+
+        clearAppData(context)
 
         val intent = Intent(context, MainActivity::class.java)
         context.startActivity(intent)

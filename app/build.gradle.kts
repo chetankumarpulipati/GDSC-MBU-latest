@@ -51,14 +51,13 @@ android {
 }
 
 dependencies {
+    implementation("androidx.navigation:navigation-compose:2.7.5")
     implementation("androidx.compose.ui:ui-tooling-preview:1.0.0")
-    implementation("com.google.firebase:firebase-auth-ktx:21.0.1")
     implementation("io.coil-kt:coil-compose:1.4.0")
     implementation("com.google.android.gms:play-services-auth:20.2.0")
     implementation("com.google.firebase:firebase-auth:21.0.1")
     implementation("com.google.accompanist:accompanist-swiperefresh:0.23.1")
     implementation("androidx.core:core-splashscreen:1.0.0")
-    implementation("androidx.navigation:navigation-compose:2.4.0-alpha10")
     implementation("androidx.compose.foundation:foundation:1.1.0-alpha02")
     implementation("androidx.compose.ui:ui:1.1.0-alpha02")
     implementation("androidx.compose.material:material:1.1.0-alpha02")
@@ -66,7 +65,6 @@ dependencies {
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.compose.material3:material3:1.2.1")
     implementation("androidx.compose.material:material-icons-extended-android:1.6.3")
-    implementation("androidx.navigation:navigation-compose:2.5.0")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

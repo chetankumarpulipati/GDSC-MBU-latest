@@ -46,16 +46,16 @@ fun FeedbackForm(onSubmit: (String, Float) -> Unit) {
         Text(text = "Your Feedback", style = MaterialTheme.typography.h6)
         Spacer(modifier = Modifier.height(8.dp))
         OutlinedTextField(
-            value = feedbackText.value, // Use state variable for feedback text
-            onValueChange = { feedbackText.value = it }, // Update on text change
+            value = feedbackText.value,
+            onValueChange = { feedbackText.value = it },
             label = { Text("Describe your experience") },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text("Rate this app (1-5):")
         RatingBar(
-            rating = rating.value, // Use state variable for ratingI
-            onRatingChanged = { rating.value = it }, // Update on rating change
+            rating = rating.value,
+            onRatingChanged = { rating.value = it },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
