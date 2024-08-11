@@ -61,8 +61,8 @@ fun FeedbackForm(onSubmit: (String, Float) -> Unit) {
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = {
-                onSubmit(feedbackText.value, rating.value) // Call onSubmit with feedbackText and rating
-                saveFeedback(feedbackText.value,context) // Save feedback to Firebase
+                onSubmit(feedbackText.value, rating.value)
+                saveFeedback(feedbackText.value,context)
             },
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {

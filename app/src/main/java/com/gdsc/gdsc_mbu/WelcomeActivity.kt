@@ -29,15 +29,18 @@ class WelcomeActivity : ComponentActivity() {
         proceedButton.setOnClickListener {
             val userDetails = mutableMapOf<String, String>()
 
-            userDetails["name"] = welcomeName.text.toString()
+            if (!isSignedInWithGoogle) {
+                userDetails["name"] = welcomeName.text.toString()
+                if (userDetails["name"].isNullOrEmpty()) {
+                    welcomeName.error = "Name cannot be empty"
+                    return@setOnClickListener
+                }
+            }
+
             userDetails["mobile"] = welcomeMobile.text.toString()
             userDetails["roll"] = rollNumber.text.toString()
             userDetails["college"] = collegeName.text.toString()
 
-            if (userDetails["name"].isNullOrEmpty()){
-                welcomeName.error = "Name cannot be empty"
-                return@setOnClickListener
-            }
             if (userDetails["mobile"]!!.length != 10){
                 welcomeMobile.error = "Mobile number should be of 10 digits"
                 return@setOnClickListener
@@ -55,7 +58,7 @@ class WelcomeActivity : ComponentActivity() {
                 setContent {
                     Menu()
                 }
-                return@setOnClickListener // Exit onCreate to prevent showing the welcome screen
+                return@setOnClickListener
             }
         }
     }
