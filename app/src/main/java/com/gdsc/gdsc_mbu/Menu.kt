@@ -312,8 +312,6 @@ fun onLogout(navController: NavController, authViewModel: AuthViewModel) {
             Log.d("LogoutButton", "Google access revoked")
         }
 
-        clearAppData(context)
-
         val intent = Intent(context, MainActivity::class.java)
         context.startActivity(intent)
     } catch (e: Exception) {
