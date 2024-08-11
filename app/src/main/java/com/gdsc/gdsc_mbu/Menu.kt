@@ -311,6 +311,25 @@ fun onLogout(navController: NavController, authViewModel: AuthViewModel) {
         googleSignInClient.revokeAccess().addOnCompleteListener {
             Log.d("LogoutButton", "Google access revoked")
         }
+        fun clearAppData(context: Context) {
+            try {
+                val sharedPreferences = context.getSharedPreferences("Login", Context.MODE_PRIVATE)
+                sharedPreferences.edit().clear().apply()
+
+                context.filesDir.deleteRecursively()
+
+                context.getExternalFilesDir(null)?.deleteRecursively()
+
+                context.databaseList().forEach { databaseName ->
+                    context.deleteDatabase(databaseName)
+                }
+
+                context.cacheDir.deleteRecursively()
+            } catch (e: Exception) {
+                Log.e("clearAppData", "Error clearing app data", e)
+            }
+        }
+        clearAppData(context)
 
         val intent = Intent(context, MainActivity::class.java)
         context.startActivity(intent)

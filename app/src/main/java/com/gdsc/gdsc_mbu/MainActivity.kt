@@ -75,7 +75,6 @@ class MainActivity : ComponentActivity() {
         if (!sharedPreferenceManager.isLocationPermissionRequested) {
             locationPermission()
         } else {
-            // If location permission was already requested, check camera permission directly
             checkCameraPermission()
         }
     }
@@ -123,20 +122,21 @@ class MainActivity : ComponentActivity() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        val sharedPreferenceManager = SharedPreferenceManager(this)
         when (requestCode) {
             LOCATION_PERMISSION_CODE -> {
-                val sharedPreferenceManager = SharedPreferenceManager(this)
+//                val sharedPreferenceManager = SharedPreferenceManager(this)
                 sharedPreferenceManager.isLocationPermissionGranted = grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED
                 checkCameraPermission()
             }
             CAMERA_PERMISSION_CODE -> {
-                val sharedPreferenceManager = SharedPreferenceManager(this)
+//                val sharedPreferenceManager = SharedPreferenceManager(this)
                 sharedPreferenceManager.isCameraPermissionGranted = grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED
                 Toast.makeText(this, "Enable Notification Permission", Toast.LENGTH_SHORT).show()
                 requestNotificationPermission()
             }
             NOTIFICATION_PERMISSION_CODE -> {
-                val sharedPreferenceManager = SharedPreferenceManager(this)
+//                val sharedPreferenceManager = SharedPreferenceManager(this)
                 sharedPreferenceManager.isNotificationPermissionGranted = grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED
             }
         }
