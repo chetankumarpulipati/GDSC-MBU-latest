@@ -61,6 +61,9 @@ class MainActivity : ComponentActivity() {
             composable("WelcomeScreen") {
                 WelcomeScreen(navController)
             }
+            composable("forgot-password"){
+                ForgotPasswordScreen(navController)
+            }
         }
         if(isLoggedIn){
           navController.navigate("Menu")

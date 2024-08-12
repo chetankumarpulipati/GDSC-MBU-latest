@@ -255,17 +255,33 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel, onLo
         ) {
             Text(loginButtonLabel)
         }
+//        ClickableText(
+//            text = AnnotatedString.Builder("Forgot Password ?").apply {
+//                addStyle(
+//                    style = SpanStyle(textDecoration = TextDecoration.Underline),
+//                    start = 0,
+//                    end = "Forgot Password".length
+//                )   }.toAnnotatedString(),
+//            onClick = {
+//
+//                      },
+//                    modifier = Modifier.padding(top = 10.dp)
+//        )
+//
+//        Text(text = "OR", modifier = Modifier.padding(top = 16.dp))
+
         ClickableText(
-            text = AnnotatedString.Builder("Forgot Password").apply {
+            text = AnnotatedString.Builder("Forgot Password ?").apply {
                 addStyle(
                     style = SpanStyle(textDecoration = TextDecoration.Underline),
                     start = 0,
                     end = "Forgot Password".length
-                )   }.toAnnotatedString(),
+                )
+            }.toAnnotatedString(),
             onClick = {
-
-                      },
-                    modifier = Modifier.padding(top = 10.dp)
+                navController.navigate("forgot-password")
+            },
+            modifier = Modifier.padding(top = 10.dp)
         )
 
         Text(text = "OR", modifier = Modifier.padding(top = 16.dp))
@@ -313,7 +329,7 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel, onLo
 }
 
 @Composable
-fun ForgotPasswordScreen() {
+fun ForgotPasswordScreen(navController: NavController) {
     val context = LocalContext.current
     val showDialog = remember { mutableStateOf(false) }
     val emailState = remember { mutableStateOf("") }
@@ -346,20 +362,20 @@ fun ForgotPasswordScreen() {
                     Button(onClick = {
                         val email = emailState.value.trim()
                         if (email.isNotEmpty()) {
-
+                            sendPasswordResetEmail(email, context)
                             showDialog.value = false
                         } else {
                             Toast.makeText(context, "Please enter a valid email address", Toast.LENGTH_SHORT).show()
                         }
                     }) {
-                        Text("Yes")
+                        Text("Send Email")
                     }
                 },
                 dismissButton = {
                     Button(onClick = {
                         showDialog.value = false
                     }) {
-                        Text("No")
+                        Text("Cancel")
                     }
                 }
             )
@@ -367,7 +383,6 @@ fun ForgotPasswordScreen() {
     }
 }
 
-@Composable
 fun sendPasswordResetEmail(email: String, context: Context) {
     val auth = Firebase.auth
     auth.sendPasswordResetEmail(email)
