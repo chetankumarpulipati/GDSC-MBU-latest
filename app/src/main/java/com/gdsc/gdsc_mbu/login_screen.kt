@@ -9,6 +9,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -335,12 +336,34 @@ fun ForgotPasswordScreen(navController: NavController) {
     val emailState = remember { mutableStateOf("") }
 
     Column(modifier = Modifier.padding(16.dp)) {
-        Text(
-            text = "Forgot Password?",
-            modifier = Modifier
-                .clickable { showDialog.value = true }
-                .padding(8.dp)
-        )
+
+//        Text(
+//            text = "Forgot Password?",
+//            style = MaterialTheme.typography.h6.copy(color = Color.Blue),
+//            modifier = Modifier
+//                .clickable { showDialog.value = true }
+//                .padding(8.dp)
+//                .align(Alignment.CenterHorizontally)
+//        )
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Box(
+                modifier = Modifier
+                    .border(2.dp, Color.Red)
+                    .padding(20.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Forgot Password?",
+                    style = MaterialTheme.typography.h6.copy(color = Color.Blue),
+                    modifier = Modifier
+                        .clickable { showDialog.value = true }
+                        .padding(20.dp)
+                )
+            }
+        }
 
         if (showDialog.value) {
             AlertDialog(
