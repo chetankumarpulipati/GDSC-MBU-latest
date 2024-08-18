@@ -2,10 +2,12 @@ package com.gdsc.gdsc_mbu
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -16,8 +18,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.DrawerValue
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -25,10 +29,13 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Facebook
 import androidx.compose.material.icons.filled.Feedback
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.People
@@ -37,6 +44,8 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -54,10 +63,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -66,6 +77,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import coil.compose.rememberImagePainter
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -165,6 +177,8 @@ fun NavigationComponent(navController: NavHostController, innerPadding: PaddingV
 
 @Composable
 fun OurTeamScreen(navController: NavController) {
+    val context = LocalContext.current
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -176,22 +190,257 @@ fun OurTeamScreen(navController: NavController) {
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
+        TeamMemberCard(
+            name = "John Doe",
+            position = "Software Engineer",
+            profileImage = R.drawable.gdsc_logo,
+            githubUrl = "https://github.com/example",
+            linkedinUrl = "https://linkedin.com/in/example",
+            instagramUrl = "https://instagram.com/example",
+            onUrlClick = { url ->
+                // Handle URL clicks (open in browser or custom tab)
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                context.startActivity(intent)
+            }
+        )
+    }
+}
+
+@Composable
+fun TeamMemberCard(
+    name: String,
+    position: String,
+    profileImage: Int,
+    githubUrl: String? = null,
+    linkedinUrl: String? = null,
+    instagramUrl: String? = null,
+    onUrlClick: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = profileImage),
+                    contentDescription = "Profile picture of $name",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(64.dp)
+                        .clip(CircleShape)
+                )
+
+                Column(
+                    modifier = Modifier
+                        .padding(start = 16.dp)
+                ) {
+                    Text(text = name, style = MaterialTheme.typography.headlineSmall)
+                    Text(text = position, style = MaterialTheme.typography.bodyMedium)
+                }
+            }
+
+            // Social Media Icons
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                if (githubUrl != null) {
+                    IconButton(onClick = { onUrlClick(githubUrl) }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_github),
+                            contentDescription = "GitHub",
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                }
+                if (linkedinUrl != null) {
+                    IconButton(onClick = { onUrlClick(linkedinUrl) }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_linkedin),
+                            contentDescription = "LinkedIn",
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                }
+                if (instagramUrl != null) {
+                    IconButton(onClick = { onUrlClick(instagramUrl) }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_instagram),
+                            contentDescription = "Instagram",
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 
 @Composable
 fun AboutScreen(navController: NavController) {
+    val scrollState = rememberScrollState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
+            .verticalScroll(scrollState) // Make content scrollable
     ) {
+        // Title Section
         Text(
-            text = "About Us",
+            text = "About GDSC MBU",
             style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
+        // About Us Description
+        Text(
+            text = "The Google Developer Student Clubs - MBU is a community where passionate minds converge to explore, innovate, and grow in the realm of technology. We are dedicated to fostering a vibrant environment for students to learn, collaborate, and build impactful solutions using Google's cutting-edge technologies. ",
+            style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Justify,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
+        // Goals & Missions
+        SectionHeader(text = "Our Goals & Missions")
+        GoalItem(text = "Empower students with the latest Google technologies.")
+        GoalItem(text = "Foster a collaborative environment for learning and innovation.")
+        GoalItem(text = "Bridge the gap between academia and industry through hands-on projects.")
+        GoalItem(text = "Build a strong network of developers and tech enthusiasts.")
+
+        // Events Section
+        SectionHeader(text = "Events")
+
+        // Example Event Item (Replace with actual event data)
+        EventCard(
+            title = "Android Study Jams",
+            date = "Oct 20 - Nov 20",
+            description = "Join our Android Study Jams to learn Android development with Kotlin.",
+            imageUrl = "https://example.com/android_study_jams.jpg"
+        )
+
+        // Upcoming Events
+        SectionHeader(text = "Upcoming Events")
+
+        // Example Upcoming Event (Replace with actual event data)
+        EventCard(
+            title = "Flutter Festival",
+            date = "Dec 10 - Dec 15",
+            description = "Dive into the world of cross-platform development with our Flutter Festival.",
+            imageUrl = "https://example.com/flutter_festival.png" // Replace with actual image URL
+        )
+
+        // Social Media Section
+        SectionHeader(text = "Connect with Us")
+        SocialMediaRow()
+
+        Spacer(modifier = Modifier.height(16.dp)) // Add spacing at the bottom
+    }
+}
+
+// Section Header Composable for better organization
+@Composable
+fun SectionHeader(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.headlineSmall,
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier.padding(vertical = 16.dp)
+    )
+}
+
+// Goal Item Composable for consistency
+@Composable
+fun GoalItem(text: String) {
+    Row(
+        modifier = Modifier.padding(bottom = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = Icons.Default.CheckCircle,
+            contentDescription = null,
+            tint = Color.Green,
+            modifier = Modifier.size(16.dp)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(text = text, style = MaterialTheme.typography.bodyMedium)
+    }
+}
+
+@Composable
+fun EventCard(title: String, date: String, description: String, imageUrl: String) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            AsyncImage(
+                model = imageUrl,
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(150.dp),
+                contentScale = ContentScale.Crop
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text = title, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+            Text(text = date, style = MaterialTheme.typography.bodyMedium)
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(text = description, style = MaterialTheme.typography.bodyMedium)
+        }
+    }
+}
+
+@Composable
+fun SocialMediaRow() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceAround
+    ) {
+        SocialMediaIcon(platform = "Facebook", url = "https://www.facebook.com/your_page") {
+            // Handle Facebook click
+        }
+        SocialMediaIcon(platform = "Instagram", url = "https://www.instagram.com/your_profile") {
+            // Handle Instagram click
+        }
+        SocialMediaIcon(platform = "Twitter", url = "https://twitter.com/your_profile") {
+            // Handle Twitter click
+        }
+    }
+}
+
+@Composable
+fun SocialMediaIcon(platform: String, url: String, onClick: () -> Unit) {
+    IconButton(onClick = onClick) {
+        Icon(
+            // Replace with appropriate icons for each platform
+            imageVector = when (platform) {
+                "Facebook" -> Icons.Default.Facebook
+                "Instagram" -> Icons.Default.Link
+                "Twitter" -> Icons.Default.Link
+                else -> Icons.Default.Link
+            },
+            contentDescription = "$platform Icon",
+            modifier = Modifier.size(24.dp) // Adjust icon size as needed
+        )
     }
 }
 
@@ -576,7 +825,6 @@ fun clearAppData(context: Context) {
 
     // Clear cache directory
     context.cacheDir.deleteRecursively()
-
 }
 
 @Composable
