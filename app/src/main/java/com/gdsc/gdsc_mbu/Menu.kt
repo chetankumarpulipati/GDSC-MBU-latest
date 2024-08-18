@@ -34,7 +34,6 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Button
@@ -291,8 +290,9 @@ fun RatingBar(
                 onClick = { onRatingChanged(i) }
             ) {
                 Icon(
-                    imageVector = if (i <= rating) Icons.Filled.Star else Icons.Outlined.Star,
-                    contentDescription = "Rating $i"
+                    imageVector = Icons.Filled.Star,
+                    contentDescription = "Rating $i",
+                    tint = if (i <= rating) Color.Gray else Color.LightGray
                 )
             }
         }
