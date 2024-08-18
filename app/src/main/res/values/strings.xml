@@ -7,4 +7,7 @@
     <string name="name_label">Name</string>
     <string name="register_button_label">Register</string>
     <string name="default_web_client_id">Sign in with Google</string>
+    <string name="register_label">Create an Account</string>
+    <string name="already_have_account_label">Already have an account?</string>
+    <string name="sign_in_label">Sign In</string>
 </resources>
