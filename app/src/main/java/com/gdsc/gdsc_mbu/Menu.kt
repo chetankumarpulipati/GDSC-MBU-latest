@@ -5,9 +5,10 @@ import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,39 +17,42 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.DrawerValue
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.ListItem
 import androidx.compose.material.Scaffold
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Feedback
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -57,11 +61,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun Menu() {
     val navController = rememberNavController()
@@ -74,6 +75,8 @@ fun Menu() {
         ?: "Jon Doe"
     val imageUrl = sharedPrefManager.googlePhotoUrl
 
+    val selectedItem = remember { mutableStateOf("") }
+
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
@@ -82,192 +85,272 @@ fun Menu() {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                     ) {
+                        Spacer(modifier = Modifier.width(100.dp))
                         Image(
                             painter = painterResource(id = R.drawable.gdsc_circular_logo),
                             contentDescription = "App Logo",
                             modifier = Modifier
-                                .padding(start = 110.dp)
-                                .height(40.dp)
-                                .width(40.dp)
+                                .size(40.dp)
                         )
-                        Text(
-                            text = "GDSC MBU",
-                            modifier = Modifier
-                                .padding(start = 50.dp)
-                                .align(Alignment.CenterVertically),
-                        )
+//                        Text(
+//                            text = "GDSC MBU",
+//                            modifier = Modifier.align(Alignment.CenterVertically),
+//                            fontWeight = FontWeight.Bold
+//                        )
                     }
                 },
                 navigationIcon = {
                     IconButton(onClick = {
-                        scope.launch {
-                            if (scaffoldState.drawerState.isOpen) {
-                                scaffoldState.drawerState.close()
-                            } else {
-                                scaffoldState.drawerState.open()
-                            }
-                        }
+                        scope.launch { scaffoldState.drawerState.open() }
                     }) {
                         Icon(Icons.Filled.Menu, contentDescription = "Menu")
                     }
-                }
+                },
+                backgroundColor = MaterialTheme.colorScheme.primaryContainer
             )
         },
-
         drawerContent = {
-            Column(
-                modifier = Modifier.fillMaxSize()) {
-                Column {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-//                            .background(lightred)
-                            .padding(20.dp)
-                            .align(Alignment.CenterHorizontally)
-                    ) {
-                        Image(
-//                            painter = painterResource(id= R.drawable.profile_sample),
-                            painter = rememberImagePainter(
-                                data = imageUrl ?: R.drawable.profile_sample,
-                                builder = {
-                                    crossfade(true)
-                                    placeholder(R.drawable.profile_sample)
-                                    error(R.drawable.profile_sample)
-                                }
-                            ),
-                            contentDescription = "profile picture",
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                                .size(100.dp)
-                                .clip(CircleShape)
-                        )
-                    }
-                    Text(
-                        text = userName,
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .align(Alignment.CenterHorizontally), // Center text horizontally
-                        fontWeight = FontWeight.Bold,
-                    )
+            DrawerContent(userName, imageUrl, selectedItem) { route ->
+                scope.launch {
+                    navController.navigate(route)
+                    scaffoldState.drawerState.close()
                 }
-                HorizontalDivider(color = Color.LightGray, thickness = 2.dp)
-                ListItem(
-                    text = { Text("Home") },
-                    icon = {
-                        Icon(
-                            Icons.Filled.Home,
-                            contentDescription = "Home"
-                        )
-                    },
-                    modifier = Modifier.clickable {
-                        navController.navigate("Home")
-                        scope.launch {
-                            delay(300)
-                            scaffoldState.drawerState.close()
-                        }
-                    }
-                )
-                ListItem(
-                    text = { Text("My Profile") },
-                    icon = {
-                        Icon(
-                            Icons.Filled.AccountCircle,
-                            contentDescription = "My Profile"
-                        )
-                    },
-                    modifier = Modifier.clickable {
-                        navController.navigate("Profile")
-                        scope.launch {
-                            delay(300)
-                            scaffoldState.drawerState.close()
-                        }
-                    }
-                )
-//                    HorizontalDivider()
-                ListItem(
-                    text = { Text("Share Idea") },
-                    icon = { Icon(Icons.Filled.Lightbulb, contentDescription = "Ideaspot") },
-                    modifier = Modifier.clickable {
-                        navController.navigate("Idea-spot")
-                        scope.launch {
-                            delay(300)
-                            scaffoldState.drawerState.close()
-                        }
-                    }
-                )
-//                    HorizontalDivider()
-                ListItem(
-                    text = { Text("Our Team") },
-                    icon = { Icon(Icons.Filled.People, contentDescription = "Our Team") },
-                    modifier = Modifier.clickable {
-                        navController.navigate("our-team")
-                        scope.launch {
-                            delay(300)
-                            scaffoldState.drawerState.close()
-                        }
-                    }
-                )
-//                    HorizontalDivider()
-                ListItem(
-                    text = { Text("About") },
-                    icon = { Icon(Icons.Filled.Info, contentDescription = "About") },
-                    modifier = Modifier.clickable {
-                        navController.navigate("about")
-                        scope.launch {
-                            delay(300)
-                            scaffoldState.drawerState.close()
-                        }
-                    }
-                )
-//                    HorizontalDivider()
-                ListItem(
-                    text = { Text("Settings") },
-                    icon = { Icon(Icons.Filled.Settings, contentDescription = "Settings") },
-                    modifier = Modifier.clickable {
-                        navController.navigate("Settings")
-                        scope.launch {
-                            delay(300)
-                            scaffoldState.drawerState.close()
-                        }
-                    }
-                )
-//                    HorizontalDivider()
-                ListItem(
-                    text = { Text("Feedback") },
-                    icon = { Icon(Icons.Filled.Feedback, contentDescription = "Feedback") },
-                    modifier = Modifier.clickable {
-                        navController.navigate("Feedback")
-                        scope.launch {
-                            delay(300)
-                            scaffoldState.drawerState.close()
-                        }
-                    }
-                )
-                ListItem(
-                    text = { Text("Logout") },
-                    icon = { Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = "Logout") },
-                    modifier = Modifier.clickable {
-                        navController.navigate("Logout")
-                        scope.launch {
-                            delay(300)
-                            scaffoldState.drawerState.close()
-                        }
-                    }
-                )
             }
         }
     ) { innerPadding ->
-        BodyContent(Modifier.padding(innerPadding))
-        NavHost(navController, startDestination = "Home") {
-            composable("Home") { HomeScreen(navController) }
-            composable("Profile") { ProfileScreen( navController,authViewModel) }
-            composable("Idea-spot") { ideaspot() }
-            composable("our-team") { Ourteam() }
-            composable("about") { about() }
-            composable("Settings") { settings() }
-            composable("Feedback") { feedback() }
-            composable("Logout") { onLogout(navController,authViewModel) }
+        NavigationComponent(navController, innerPadding, authViewModel)
+    }
+}
+
+@Composable
+fun NavigationComponent(navController: NavHostController, innerPadding: PaddingValues, authViewModel: AuthViewModel) {
+    NavHost(navController, startDestination = "home", modifier = Modifier.padding(innerPadding)) {
+        composable("home") {
+            HomeScreen(navController)
         }
+        composable("profile") {
+            ProfileScreen(navController, authViewModel)
+        }
+        composable("Idea-spot") {
+            IdeaSpotScreen(navController)
+        }
+        composable("Our Team") {
+            OurTeamScreen(navController)
+        }
+        composable("About") {
+            AboutScreen(navController)
+        }
+        composable("Settings") {
+            SettingsScreen(navController)
+        }
+        composable("Feedback") {
+            FeedbackScreen(navController)
+        }
+        composable("Logout") {
+            onLogout(navController, authViewModel)
+        }
+    }
+}
+
+@Composable
+fun OurTeamScreen(navController: NavController) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text(
+            text = "Our Team",
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
+    }
+}
+
+@Composable
+fun AboutScreen(navController: NavController) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text(
+            text = "About Us",
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
+    }
+}
+
+@Composable
+fun SettingsScreen(navController: NavController) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text(
+            text = "Settings",
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
+    }
+}
+
+@Composable
+fun FeedbackScreen(navController: NavController) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text(
+            text = "Feedback",
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
+    }
+}
+
+@Composable
+fun IdeaSpotScreen(navController: NavController) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text(
+            text = "Share Your Ideas",
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
+    }
+}
+
+@Composable
+fun DrawerContent(
+    userName: String,
+    imageUrl: String?,
+    selectedItem: MutableState<String>,
+    onItemClick: (route: String) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        // User profile section
+        UserProfileHeader(userName, imageUrl)
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Navigation items
+        NavigationItem(
+            text = "Home",
+            icon = Icons.Filled.Home,
+            selected = selectedItem.value == "Home",
+            onClick = {
+                selectedItem.value = "Home"
+                onItemClick("Home")
+            }
+        )
+        NavigationItem(
+            text = "My Profile",
+            icon = Icons.Filled.AccountCircle,
+            selected = selectedItem.value == "Profile",
+            onClick = {
+                selectedItem.value = "Profile"
+                onItemClick("Profile")
+            }
+        )
+        NavigationItem(
+            text = "Share Idea",
+            icon = Icons.Filled.Lightbulb,
+            selected = selectedItem.value == "Idea-spot",
+            onClick = {
+                selectedItem.value = "Idea-spot"
+                onItemClick("Idea-spot")
+            }
+        )
+        NavigationItem(
+            text = "Our Team",
+            icon = Icons.Filled.People,
+            selected = selectedItem.value == "Our Team",
+            onClick = {
+                selectedItem.value = "Our Team"
+                onItemClick("Our Team")
+            }
+        )
+        NavigationItem(
+            text = "About",
+            icon = Icons.Filled.Info,
+            selected = selectedItem.value == "About",
+            onClick = {
+                selectedItem.value = "About"
+                onItemClick("About")
+            }
+        )
+        NavigationItem(
+            text = "Settings",
+            icon = Icons.Filled.Settings,
+            selected = selectedItem.value == "Settings",
+            onClick = {
+                selectedItem.value = "Settings"
+                onItemClick("Settings")
+            }
+        )
+        NavigationItem(
+            text = "Feedback",
+            icon = Icons.Filled.Feedback,
+            selected = selectedItem.value == "Feedback",
+            onClick = {
+                selectedItem.value = "Feedback"
+                onItemClick("Feedback")
+            }
+        )
+        NavigationItem(
+            text = "Logout",
+            icon = Icons.Filled.Logout,
+            selected = selectedItem.value == "Logout",
+            onClick = {
+                selectedItem.value = "Logout"
+                onItemClick("Logout")
+            }
+        )
+    }
+}
+
+@Composable
+fun UserProfileHeader(userName: String, imageUrl: String?) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = rememberImagePainter(
+                data = imageUrl ?: R.drawable.profile_sample,
+                builder = {
+                    crossfade(true)
+                    placeholder(R.drawable.profile_sample)
+                    error(R.drawable.profile_sample)
+                }
+            ),
+            contentDescription = "Profile Picture",
+            modifier = Modifier
+                .size(100.dp)
+                .clip(CircleShape)
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = userName,
+            fontWeight = FontWeight.Bold,
+            fontSize = 18.sp
+        )
     }
 }
 
@@ -295,6 +378,38 @@ fun clearAppData(context: Context) {
     // Clear cache directory
     context.cacheDir.deleteRecursively()
 
+}
+
+@Composable
+fun NavigationItem(
+    text: String,
+    icon: ImageVector,
+    selected: Boolean,
+    onClick: () -> Unit
+) {
+    val backgroundColor = if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.12f) else Color.Transparent
+    val contentColor = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+    val padding = if (selected) 24.dp else 16.dp  // Increase padding when selected
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = contentColor
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(
+            text = text,
+            color = contentColor,
+            style = MaterialTheme.typography.bodyMedium
+        )
+    }
 }
 
 @Composable
