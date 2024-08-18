@@ -3,6 +3,7 @@ package com.gdsc.gdsc_mbu
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.DrawerValue
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -33,13 +35,19 @@ import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,6 +56,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -61,6 +70,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 
 @Composable
@@ -216,12 +226,23 @@ fun FeedbackScreen(navController: NavController) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IdeaSpotScreen(navController: NavController) {
+    val sharedPrefManager = SharedPreferenceManager(LocalContext.current)
+    var idea by remember { mutableStateOf("") }
+    val userEmail = sharedPrefManager.userEmail ?: ""
+    val userName = sharedPrefManager.getUserDetails()["name"].takeIf { !it.isNullOrEmpty() }
+        ?: sharedPrefManager.username
+        ?: ""
+    val context = LocalContext.current
+    var toastMessage by remember { mutableStateOf<String?>(null) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = "Share Your Ideas",
@@ -229,7 +250,93 @@ fun IdeaSpotScreen(navController: NavController) {
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
+        // Display Name (Greyed out and non-editable)
+        OutlinedTextField(
+            value = userName,
+            onValueChange = { /* Do nothing, keep it non-editable */ },
+            label = { Text("Name") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            enabled = false, // Make it non-editable
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                disabledTextColor = Color.Gray,
+                disabledLabelColor = Color.Gray
+            )
+        )
+
+        // Display Email (Greyed out and non-editable)
+        OutlinedTextField(
+            value = userEmail,
+            onValueChange = { /* Do nothing, keep it non-editable */ },
+            label = { Text("Email") },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            enabled = false,
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                disabledTextColor = Color.Gray,
+                disabledLabelColor = Color.Gray
+            )
+        )
+
+        OutlinedTextField(
+            value = idea,
+            onValueChange = { idea = it },
+            label = { Text("Your Idea") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .padding(bottom = 16.dp)
+        )
+
+        Button(
+            onClick = {
+                saveIdeaToFirestore(userName, userEmail, idea) { message ->
+                    toastMessage = message
+                    if (message == "Idea submitted successfully") {
+                        idea = ""
+                    }
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Submit Idea")
+        }
+
+        Text(
+            text = "${idea.split("\\s+".toRegex()).size} / 500",
+            modifier = Modifier
+                .align(Alignment.End)
+                .padding(top = 8.dp)
+        )
     }
+
+    toastMessage?.let { message ->
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        toastMessage = null
+    }
+}
+
+fun saveIdeaToFirestore(name: String, email: String, idea: String, onResult: (String) -> Unit) {
+    val firestore = FirebaseFirestore.getInstance()
+    val ideaData = hashMapOf(
+        "name" to name,
+        "email" to email,
+        "idea" to idea
+    )
+
+    firestore.collection("IDEAS")
+        .add(ideaData)
+        .addOnSuccessListener { documentReference ->
+            onResult("Idea submitted successfully")
+            Log.d("Firestore", "DocumentSnapshot added with ID: ${documentReference.id}")
+        }
+        .addOnFailureListener { e ->
+            onResult("Error submitting idea")
+            Log.w("Firestore", "Error adding document", e)
+        }
 }
 
 @Composable
