@@ -33,6 +33,8 @@ import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Button
@@ -212,6 +214,11 @@ fun SettingsScreen(navController: NavController) {
 
 @Composable
 fun FeedbackScreen(navController: NavController) {
+    val context = LocalContext.current
+    var feedbackText by remember { mutableStateOf("") }
+    var rating by remember { mutableStateOf(0) }
+    var toastMessage by remember { mutableStateOf<String?>(null) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -223,7 +230,92 @@ fun FeedbackScreen(navController: NavController) {
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
+        // Rating Bar
+        RatingBar(
+            rating = rating,
+            onRatingChanged = { rating = it },
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
+        // Feedback Input
+        OutlinedTextField(
+            value = feedbackText,
+            onValueChange = { feedbackText = it },
+            label = { Text("Tell us what you think") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(150.dp)
+        )
+
+        // Word Count
+        Text(
+            text = "Word count: ${feedbackText.split("\\s+".toRegex()).size}",
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(top = 8.dp)
+        )
+
+        // Submit Button
+        Button(
+            onClick = {
+                saveFeedbackToFirestore(feedbackText, rating) { message ->
+                    toastMessage = message
+                    if (message == "Feedback submitted successfully") {
+                        feedbackText = ""
+                        rating = 0
+                    }
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp)
+        ) {
+            Text("Submit Feedback")
+        }
     }
+
+    toastMessage?.let { message ->
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        toastMessage = null
+    }
+}
+
+@Composable
+fun RatingBar(
+    rating: Int,
+    onRatingChanged: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(modifier = modifier) {
+        for (i in 1..5) {
+            IconButton(
+                onClick = { onRatingChanged(i) }
+            ) {
+                Icon(
+                    imageVector = if (i <= rating) Icons.Filled.Star else Icons.Outlined.Star,
+                    contentDescription = "Rating $i"
+                )
+            }
+        }
+    }
+}
+
+fun saveFeedbackToFirestore(feedbackText: String, rating: Int, onResult: (String) -> Unit) {
+    val firestore = FirebaseFirestore.getInstance()
+    val feedbackData = hashMapOf(
+        "feedback" to feedbackText,
+        "rating" to rating
+    )
+
+    firestore.collection("FEEDBACKS")
+        .add(feedbackData)
+        .addOnSuccessListener { documentReference ->
+            onResult("Feedback submitted successfully")
+            Log.d("Firestore", "DocumentSnapshot added with ID: ${documentReference.id}")
+        }
+        .addOnFailureListener { e ->
+            onResult("Error submitting feedback")
+            Log.w("Firestore", "Error adding document", e)
+        }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
