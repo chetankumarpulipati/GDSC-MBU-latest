@@ -23,4 +23,9 @@
     <color name="colorOnError">#621A1A</color>
     <color name="colorOnBackground">#000000</color>
     <color name="colorOnSurface">#000000</color>
+
+    <color name="primary_gradient_start">#614385</color>
+    <color name="primary_gradient_end">#516395</color>
+    <color name="button_color">#FFD700</color>
+    <color name="light_gray">#808080</color>
 </resources>

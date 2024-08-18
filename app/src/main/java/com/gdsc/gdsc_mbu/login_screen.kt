@@ -207,8 +207,8 @@ fun LoginScreen(
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(
-                        Color(0xFF614385),
-                        Color(0xFF516395)
+                        MaterialTheme.colors.primary,
+                        MaterialTheme.colors.secondary
                     )
                 )
             )
@@ -346,7 +346,7 @@ fun LoginScreen(
                 ) {
                     androidx.compose.material3.Text(
                         text = loginButtonLabel,
-                        color = Color(0xFF614385),
+                        color = MaterialTheme.colors.primary,
                         fontSize = 18.sp
                     )
                 }
@@ -390,7 +390,7 @@ fun LoginScreen(
                     )
                     androidx.compose.material3.Text(
                         text = "Sign in with Google",
-                        color = Color(0xFF614385),
+                        color = MaterialTheme.colors.primary,
                         fontSize = 18.sp
                     )
                 }

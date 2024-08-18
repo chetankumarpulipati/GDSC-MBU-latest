@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -60,7 +61,10 @@ fun WelcomeScreen(navController: NavController) {
             .fillMaxSize()
             .background(
                 brush = Brush.linearGradient(
-                    colors = listOf(Color(0xFF614385), Color(0xFF516395))
+                    colors = listOf(
+                        MaterialTheme.colors.primary,
+                        MaterialTheme.colors.secondary
+                    )
                 )
             ),
         contentAlignment = Alignment.Center
