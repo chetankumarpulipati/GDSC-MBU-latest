@@ -181,6 +181,9 @@ fun NavigationComponent(navController: NavHostController, innerPadding: PaddingV
         composable("forgot-password") {
             ForgotPasswordScreen(navController)
         }
+        composable("events") {
+            details_page(navController)
+        }
     }
 }
 

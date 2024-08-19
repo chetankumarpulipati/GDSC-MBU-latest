@@ -64,6 +64,10 @@ class MainActivity : ComponentActivity() {
             composable("forgot-password"){
                 ForgotPasswordScreen(navController)
             }
+            composable("EventDetailsScreen/{eventId}") { backStackEntry ->
+                val eventId = backStackEntry.arguments?.getString("eventId") ?: return@composable
+                EventDetailsScreen(eventId)
+            }
         }
         if(isLoggedIn){
           navController.navigate("Menu")
