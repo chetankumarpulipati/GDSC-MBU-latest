@@ -798,6 +798,12 @@ fun FeedbackScreen(navController: NavController) {
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(bottom = 16.dp)
         )
+        Text(
+            text = "We value your feedback and would love to hear your thoughts on our app. Please rate your experience and provide any comments or suggestions you may have. Your feedback helps us improve and serve you better.",
+            style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Justify,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
 
         // Rating Bar
         RatingBar(
@@ -826,11 +832,15 @@ fun FeedbackScreen(navController: NavController) {
         // Submit Button
         Button(
             onClick = {
-                saveFeedbackToFirestore(feedbackText, rating) { message ->
-                    toastMessage = message
-                    if (message == "Feedback submitted successfully") {
-                        feedbackText = ""
-                        rating = 0
+                if (feedbackText.isBlank() || rating == 0) {
+                    toastMessage = "Please provide feedback and a rating."
+                } else {
+                    saveFeedbackToFirestore(feedbackText, rating) { message ->
+                        toastMessage = message
+                        if (message == "Feedback submitted successfully") {
+                            feedbackText = ""
+                            rating = 0
+                        }
                     }
                 }
             },
@@ -841,7 +851,6 @@ fun FeedbackScreen(navController: NavController) {
             Text("Submit Feedback")
         }
     }
-
     toastMessage?.let { message ->
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
         toastMessage = null
@@ -911,8 +920,13 @@ fun IdeaSpotScreen(navController: NavController) {
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(bottom = 16.dp)
         )
+        Text(
+            text = "We value your input and creativity! Please share your innovative ideas with us. Your suggestions can help us improve and bring new features to our community.",
+            style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Justify,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
 
-        // Display Name (Greyed out and non-editable)
         OutlinedTextField(
             value = userName,
             onValueChange = { /* Do nothing, keep it non-editable */ },
