@@ -1,7 +1,9 @@
 package com.gdsc.gdsc_mbu
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
@@ -72,6 +74,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -796,13 +800,51 @@ fun SettingsSwitch(
         Switch(
             checked = isChecked,
             onCheckedChange = { newChecked ->
-                isChecked = newChecked
-                onCheckedChange(newChecked)
-                editor.putBoolean("email_notifications", newChecked)
-                editor.apply()
-                Toast.makeText(context, "Email Notifications ${if (newChecked) "Enabled" else "Disabled"}", Toast.LENGTH_SHORT).show()
+                if (newChecked) {
+                    if (ContextCompat.checkSelfPermission(
+                            context,
+                            Manifest.permission.POST_NOTIFICATIONS
+                        ) == PackageManager.PERMISSION_GRANTED
+                    ) {
+                        isChecked = true
+                        onCheckedChange(true)
+                        editor.putBoolean("push_notifications", true)
+                        editor.apply()
+                        Toast.makeText(context, "Push Notifications Enabled", Toast.LENGTH_SHORT).show()
+                    } else {
+                        ActivityCompat.requestPermissions(
+                            context as MainActivity,
+                            arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                            REQUEST_NOTIFICATION_PERMISSION
+                        )
+                    }
+                } else {
+                    isChecked = false
+                    onCheckedChange(false)
+                    editor.putBoolean("push_notifications", false)
+                    editor.apply()
+                    Toast.makeText(context, "Push Notifications Disabled", Toast.LENGTH_SHORT).show()
+                }
             }
         )
+    }
+}
+
+const val REQUEST_NOTIFICATION_PERMISSION = 123
+
+fun handlePermissionResult(
+    requestCode: Int,
+    permissions: Array<out String>,
+    grantResults: IntArray,
+    onPermissionGranted: () -> Unit,
+    onPermissionDenied: () -> Unit
+) {
+    if (requestCode == REQUEST_NOTIFICATION_PERMISSION) {
+        if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+            onPermissionGranted()
+        } else {
+            onPermissionDenied()
+        }
     }
 }
 
