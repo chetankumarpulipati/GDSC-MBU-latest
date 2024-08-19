@@ -594,7 +594,7 @@ fun TeamMemberCard(
                     .padding(top = 16.dp),
                 horizontalArrangement = Arrangement.Center
             ) {
-                if (githubUrl != null) {
+                if (!githubUrl.isNullOrEmpty()) {
                     IconButton(onClick = { onUrlClick(githubUrl) }) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_github),
@@ -603,7 +603,7 @@ fun TeamMemberCard(
                         )
                     }
                 }
-                if (linkedinUrl != null) {
+                if (!linkedinUrl.isNullOrEmpty()) {
                     IconButton(onClick = { onUrlClick(linkedinUrl) }) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_linkedin),
@@ -612,7 +612,7 @@ fun TeamMemberCard(
                         )
                     }
                 }
-                if (instagramUrl != null) {
+                if (!instagramUrl.isNullOrEmpty()) {
                     IconButton(onClick = { onUrlClick(instagramUrl) }) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_instagram),
