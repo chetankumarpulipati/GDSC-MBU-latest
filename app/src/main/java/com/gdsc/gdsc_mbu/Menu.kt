@@ -30,7 +30,6 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Facebook
 import androidx.compose.material.icons.filled.Feedback
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
@@ -85,6 +84,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
+
 
 @Composable
 fun Menu() {
@@ -175,30 +175,367 @@ fun NavigationComponent(navController: NavHostController, innerPadding: PaddingV
     }
 }
 
+
 @Composable
 fun OurTeamScreen(navController: NavController) {
     val context = LocalContext.current
-
+    val scrollstate = rememberScrollState()
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
+            .verticalScroll(scrollstate)
     ) {
         Text(
-            text = "Our Team",
+            text = "Meet Our Team",
             style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+        Text(
+            text = "Our team is composed of passionate and dedicated individuals who are committed to driving innovation and excellence. Each member brings unique skills and perspectives, working collaboratively to achieve our goals and make a positive impact.",
+            style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Justify,
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
         TeamMemberCard(
-            name = "John Doe",
-            position = "Software Engineer",
-            profileImage = R.drawable.gdsc_logo,
-            githubUrl = "https://github.com/example",
-            linkedinUrl = "https://linkedin.com/in/example",
-            instagramUrl = "https://instagram.com/example",
+            name = "Rakesh Valasala",
+            position = "GDSC LEAD",
+            profileImage = R.drawable.rakesh,
+            githubUrl = "https://github.com/VALASALARAKESH",
+            linkedinUrl = "https://www.linkedin.com/in/rakeshvalasala/",
+            instagramUrl = "https://www.instagram.com/rakesh_valasala",
             onUrlClick = { url ->
-                // Handle URL clicks (open in browser or custom tab)
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                context.startActivity(intent)
+            }
+        )
+        TeamMemberCard(
+            name = "Ramani K",
+            position = "Faculty Head",
+            profileImage = R.drawable.ramani_k,
+            githubUrl = "",
+            linkedinUrl = "",
+            instagramUrl = "",
+            onUrlClick = { url ->
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                context.startActivity(intent)
+            }
+        )
+        TeamMemberCard(
+            name = "Yogendra Prasad Pujari",
+            position = "Faculty Advisor",
+            profileImage = R.drawable.yogendra_prasad_pujari,
+            githubUrl = "",
+            linkedinUrl = "",
+            instagramUrl = "",
+            onUrlClick = { url ->
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                context.startActivity(intent)
+            }
+        )
+        TeamMemberCard(
+            name = "Gurram Ajith Kumar",
+            position = "MERN Stack development Lead",
+            profileImage = R.drawable.gurram_ajith_kumar,
+            githubUrl = "",
+            linkedinUrl = "",
+            instagramUrl = "",
+            onUrlClick = { url ->
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                context.startActivity(intent)
+            }
+        )
+        TeamMemberCard(
+            name = "Srinivasa Reddy",
+            position = "Web Development Lead",
+            profileImage = R.drawable.srinivasa_reddy,
+            githubUrl = "",
+            linkedinUrl = "",
+            instagramUrl = "",
+            onUrlClick = { url ->
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                context.startActivity(intent)
+            }
+        )
+        TeamMemberCard(
+            name = "Venkata Lohith Kumar Reddy Mukkamalla",
+            position = "Web Development Lead",
+            profileImage = R.drawable.venkata_lohith_kumar_reddy_mukkamalla_0ybtfar,
+            githubUrl = "",
+            linkedinUrl = "",
+            instagramUrl = "",
+            onUrlClick = { url ->
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                context.startActivity(intent)
+            }
+        )
+        TeamMemberCard(
+            name = "Thanmayi Pothula",
+            position = "Web Development Lead",
+            profileImage = R.drawable.thanmayi_pothula,
+            githubUrl = "",
+            linkedinUrl = "",
+            instagramUrl = "",
+            onUrlClick = { url ->
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                context.startActivity(intent)
+            }
+        )
+        TeamMemberCard(
+            name = "Chillale Sai Ganesh",
+            position = "Web Development Lead",
+            profileImage = R.drawable.chillale_sai_ganesh,
+            githubUrl = "",
+            linkedinUrl = "",
+            instagramUrl = "",
+            onUrlClick = { url ->
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                context.startActivity(intent)
+            }
+        )
+        TeamMemberCard(
+            name = "Kasarla Madhumitha",
+            position = "Web Development Lead",
+            profileImage = R.drawable.kasarla_madhumitha,
+            githubUrl = "",
+            linkedinUrl = "",
+            instagramUrl = "",
+            onUrlClick = { url ->
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                context.startActivity(intent)
+            }
+        )
+        TeamMemberCard(
+            name = "Fayaz Molagavelli",
+            position = "Android Development Lead",
+            profileImage = R.drawable.fayaz_molagavelli,
+            githubUrl = "",
+            linkedinUrl = "",
+            instagramUrl = "",
+            onUrlClick = { url ->
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                context.startActivity(intent)
+            }
+        )
+        TeamMemberCard(
+            name = "Thiruvidhi Revanth",
+            position = "Flutter Developer",
+            profileImage = R.drawable.revanth,
+            githubUrl = "",
+            linkedinUrl = "",
+            instagramUrl = "",
+            onUrlClick = { url ->
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                context.startActivity(intent)
+            }
+        )
+        // Indu Priya
+        TeamMemberCard(
+            name = "Indu Priya",
+            position = "ML & Data Science Lead",
+            profileImage = R.drawable.indu_priya,
+            githubUrl = "",
+            linkedinUrl = "",
+            instagramUrl = "",
+            onUrlClick = { url ->
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                context.startActivity(intent)
+            }
+        )
+
+// Pradeepika Muppuru
+        TeamMemberCard(
+            name = "Pradeepika Muppuru",
+            position = "Data Science Lead",
+            profileImage = R.drawable.pradeepika_muppuru,
+            githubUrl = "",
+            linkedinUrl = "",
+            instagramUrl = "",
+            onUrlClick = { url ->
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                context.startActivity(intent)
+            }
+        )
+
+// Divya Vavilthota
+        TeamMemberCard(
+            name = "Divya Vavilthota",
+            position = "ML Lead",
+            profileImage = R.drawable.divya_vavilthota,
+            githubUrl = "",
+            linkedinUrl = "",
+            instagramUrl = "",
+            onUrlClick = { url ->
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                context.startActivity(intent)
+            }
+        )
+
+// MATAM VENKATAMUNI ROSHINI
+        TeamMemberCard(
+            name = "MATAM VENKATAMUNI ROSHINI",
+            position = "ML lead",
+            profileImage = R.drawable.matam_venkatamuni_roshini,
+            githubUrl = "",
+            linkedinUrl = "",
+            instagramUrl = "",
+            onUrlClick = { url ->
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                context.startActivity(intent)
+            }
+        )
+
+// Sneha Erla
+        TeamMemberCard(
+            name = "Sneha Erla",
+            position = "Data Science Lead",
+            profileImage = R.drawable.sneha_erla,
+            githubUrl = "",
+            linkedinUrl = "",
+            instagramUrl = "",
+            onUrlClick = { url ->
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                context.startActivity(intent)
+            }
+        )
+
+// Avinash Baratam
+        TeamMemberCard(
+            name = "Avinash Baratam",
+            position = "Ui/UX Developer",
+            profileImage = R.drawable.avinash_baratam,
+            githubUrl = "",
+            linkedinUrl = "",
+            instagramUrl = "",
+            onUrlClick = { url ->
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                context.startActivity(intent)
+            }
+        )
+
+// GOUTHAM BHAT
+        TeamMemberCard(
+            name = "GOUTHAM BHAT",
+            position = "Ui/UX Developer",
+            profileImage = R.drawable.goutham_bhat,
+            githubUrl = "",
+            linkedinUrl = "",
+            instagramUrl = "",
+            onUrlClick = { url ->
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                context.startActivity(intent)
+            }
+        )
+
+// Modupalli Leena
+        TeamMemberCard(
+            name = "Modupalli Leena",
+            position = "Event Management Lead",
+            profileImage = R.drawable.modupalli_leena,
+            githubUrl = "",
+            linkedinUrl = "",
+            instagramUrl = "",
+            onUrlClick = { url ->
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                context.startActivity(intent)
+            }
+        )
+
+// Rangineni Devarshini
+        TeamMemberCard(
+            name = "Rangineni Devarshini",
+            position = "Event Management Lead",
+            profileImage = R.drawable.rangineni_devarshini,
+            githubUrl = "",
+            linkedinUrl = "",
+            instagramUrl = "",
+            onUrlClick = { url ->
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                context.startActivity(intent)
+            }
+        )
+
+//PUTHRAMADDI NANDINI
+        TeamMemberCard(
+            name = "PUTHRAMADDI NANDINI",
+            position = "Event Management Lead",
+            profileImage = R.drawable.puthramaddi_nandini,
+            githubUrl = "",
+            linkedinUrl = "",
+            instagramUrl = "",
+            onUrlClick = { url ->
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                context.startActivity(intent)
+            }
+        )
+
+// Sadiq Shaik
+        TeamMemberCard(
+            name = "Sadiq Shaik",
+            position = "Event Management Lead",
+            profileImage = R.drawable.sadiq_shaik,
+            githubUrl = "",
+            linkedinUrl = "",
+            instagramUrl = "",
+            onUrlClick = { url ->
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                context.startActivity(intent)
+            }
+        )
+
+// Thanuja Sadhama
+        TeamMemberCard(
+            name = "Thanuja Sadhama",
+            position = "Event Management Lead",
+            profileImage = R.drawable.thanuja_sadhama,
+            githubUrl = "",
+            linkedinUrl = "",
+            instagramUrl = "",
+            onUrlClick = { url ->
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                context.startActivity(intent)
+            }
+        )
+
+// Pathan Khaleedh Khan
+        TeamMemberCard(
+            name = "Pathan Khaleedh Khan",
+            position = "Marketing Lead",
+            profileImage = R.drawable.pathan_khaleedh_khan,
+            githubUrl = "",
+            linkedinUrl = "",
+            instagramUrl = "",
+            onUrlClick = { url ->
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                context.startActivity(intent)
+            }
+        )
+
+// Kullai Metikala
+        TeamMemberCard(
+            name = "Kullai Metikala",
+            position = "Cyber Security Lead",
+            profileImage = R.drawable.kullai_metikala,
+            githubUrl = "",
+            linkedinUrl = "",
+            instagramUrl = "",
+            onUrlClick = { url ->
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                context.startActivity(intent)
+            }
+        )
+
+// V.S.Mustak Moulana
+        TeamMemberCard(
+            name = "V.S.Mustak Moulana",
+            position = "Editor",
+            profileImage = R.drawable.v_s_mustak_moulana,
+            githubUrl = "",
+            linkedinUrl = "",
+            instagramUrl = "",
+            onUrlClick = { url ->
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                 context.startActivity(intent)
             }
@@ -297,9 +634,9 @@ fun AboutScreen(navController: NavController) {
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            .verticalScroll(scrollState) // Make content scrollable
+            .verticalScroll(scrollState)
     ) {
-        // Title Section
+
         Text(
             text = "About GDSC MBU",
             style = MaterialTheme.typography.headlineMedium,
@@ -307,7 +644,6 @@ fun AboutScreen(navController: NavController) {
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        // About Us Description
         Text(
             text = "The Google Developer Student Clubs - MBU is a community where passionate minds converge to explore, innovate, and grow in the realm of technology. We are dedicated to fostering a vibrant environment for students to learn, collaborate, and build impactful solutions using Google's cutting-edge technologies. ",
             style = MaterialTheme.typography.bodyLarge,
@@ -315,40 +651,16 @@ fun AboutScreen(navController: NavController) {
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        // Goals & Missions
         SectionHeader(text = "Our Goals & Missions")
         GoalItem(text = "Empower students with the latest Google technologies.")
         GoalItem(text = "Foster a collaborative environment for learning and innovation.")
         GoalItem(text = "Bridge the gap between academia and industry through hands-on projects.")
         GoalItem(text = "Build a strong network of developers and tech enthusiasts.")
 
-        // Events Section
-        SectionHeader(text = "Events")
-
-        // Example Event Item (Replace with actual event data)
-        EventCard(
-            title = "Android Study Jams",
-            date = "Oct 20 - Nov 20",
-            description = "Join our Android Study Jams to learn Android development with Kotlin.",
-            imageUrl = "https://example.com/android_study_jams.jpg"
-        )
-
-        // Upcoming Events
-        SectionHeader(text = "Upcoming Events")
-
-        // Example Upcoming Event (Replace with actual event data)
-        EventCard(
-            title = "Flutter Festival",
-            date = "Dec 10 - Dec 15",
-            description = "Dive into the world of cross-platform development with our Flutter Festival.",
-            imageUrl = "https://example.com/flutter_festival.png" // Replace with actual image URL
-        )
-
-        // Social Media Section
         SectionHeader(text = "Connect with Us")
         SocialMediaRow()
 
-        Spacer(modifier = Modifier.height(16.dp)) // Add spacing at the bottom
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
@@ -415,32 +727,41 @@ fun SocialMediaRow() {
             .padding(vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceAround
     ) {
-        SocialMediaIcon(platform = "Facebook", url = "https://www.facebook.com/your_page") {
-            // Handle Facebook click
-        }
-        SocialMediaIcon(platform = "Instagram", url = "https://www.instagram.com/your_profile") {
-            // Handle Instagram click
-        }
-        SocialMediaIcon(platform = "Twitter", url = "https://twitter.com/your_profile") {
-            // Handle Twitter click
-        }
+        SocialMediaIcon(platform = "Twitter", url = "https://x.com/gdscmbu")
+        SocialMediaIcon(platform = "Instagram", url = "https://www.instagram.com/gdsc.mbu/")
+        SocialMediaIcon(platform = "LinkedIn", url = "https://www.linkedin.com/in/google-developer-student-clubs-mbu")
     }
 }
 
 @Composable
-fun SocialMediaIcon(platform: String, url: String, onClick: () -> Unit) {
-    IconButton(onClick = onClick) {
-        Icon(
-            // Replace with appropriate icons for each platform
-            imageVector = when (platform) {
-                "Facebook" -> Icons.Default.Facebook
-                "Instagram" -> Icons.Default.Link
-                "Twitter" -> Icons.Default.Link
-                else -> Icons.Default.Link
-            },
-            contentDescription = "$platform Icon",
-            modifier = Modifier.size(24.dp) // Adjust icon size as needed
-        )
+fun SocialMediaIcon(platform: String, url: String) {
+    val context = LocalContext.current
+    IconButton(onClick = {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        context.startActivity(intent)
+    }) {
+        when (platform) {
+            "Twitter" -> Icon(
+                painter = painterResource(R.drawable.twitter),
+                contentDescription = "Twitter Icon",
+                modifier = Modifier.size(24.dp),
+            )
+            "Instagram" -> Icon(
+                painter = painterResource(R.drawable.ic_instagram),
+                contentDescription = "Instagram Icon",
+                modifier = Modifier.size(24.dp)
+            )
+            "LinkedIn" -> Icon(
+                painter = painterResource(R.drawable.ic_linkedin),
+                contentDescription = "LinkedIn Icon",
+                modifier = Modifier.size(24.dp)
+            )
+            else -> Icon(
+                imageVector = Icons.Default.Link,
+                contentDescription = "$platform Icon",
+                modifier = Modifier.size(24.dp)
+            )
+        }
     }
 }
 
@@ -606,7 +927,6 @@ fun IdeaSpotScreen(navController: NavController) {
             )
         )
 
-        // Display Email (Greyed out and non-editable)
         OutlinedTextField(
             value = userEmail,
             onValueChange = { /* Do nothing, keep it non-editable */ },
@@ -634,10 +954,14 @@ fun IdeaSpotScreen(navController: NavController) {
 
         Button(
             onClick = {
-                saveIdeaToFirestore(userName, userEmail, idea) { message ->
-                    toastMessage = message
-                    if (message == "Idea submitted successfully") {
-                        idea = ""
+                if (idea.isBlank()) {
+                    toastMessage = "Please enter your idea."
+                } else {
+                    saveIdeaToFirestore(userName, userEmail, idea) { message ->
+                        toastMessage = message
+                        if (message == "Idea submitted successfully") {
+                            idea = ""
+                        }
                     }
                 }
             },
