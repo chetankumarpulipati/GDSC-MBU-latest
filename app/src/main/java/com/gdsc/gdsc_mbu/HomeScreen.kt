@@ -1,9 +1,11 @@
 package com.gdsc.gdsc_mbu
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,16 +15,23 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,7 +39,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -55,7 +66,8 @@ fun CommunityNav() {
                 )
                 context.startActivity(intent)
             },
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(16.dp), // Use Material 3 shape
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp) // Use Material 3 elevation
     ) {
         Row(
             modifier = Modifier
@@ -69,26 +81,146 @@ fun CommunityNav() {
             ) {
                 Text(
                     text = "Join our Community!",
-                    color = MaterialTheme.colors.primary,
+                    color = MaterialTheme.colorScheme.primary,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "Connect and collaborate with fellow developers.",
-                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.8f),
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
                     fontSize = 14.sp
                 )
             }
             Icon(
                 imageVector = Icons.Filled.ArrowForward,
                 contentDescription = "Go to Community",
-                tint = MaterialTheme.colors.primary
+                tint = MaterialTheme.colorScheme.primary
             )
         }
     }
 }
 
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun UpcomingEvent() {
+    var showDetails by remember { mutableStateOf(false) }
+
+    val eventDetails = EventDetails(
+        name = "GDSC MBU Convocation Ceremony",
+        description = "Celebrate GDSC's journey...",
+        location = "Dasari Auditorium, Mohan Babu University, Tirupati",
+        date = "Thursday, August 22, 2024",
+        time = "2:00 PM – 5:00 PM GMT+5:30",
+        imageUrl = R.drawable.ic_linkedin
+    )
+
+    Scaffold(
+        topBar = { TopAppBar(title = { Text("Upcoming Events") }) }
+    ) { paddingValues ->
+        Column(modifier = Modifier.padding(paddingValues)) {
+            if (!showDetails) {
+                EventCard(eventDetails) { showDetails = true }
+            } else {
+                EventDetailsScreen(eventDetails) { showDetails = false }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EventDetailsScreen(event: EventDetails, onBack: () -> Unit) {
+    val context = LocalContext.current
+    Scaffold(
+        topBar = { TopAppBar(title = { Text(event.name) }) },
+    ) { innerPadding -> // Add innerPadding parameter
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+                .padding(innerPadding) // Apply inner padding
+                .verticalScroll(rememberScrollState())
+        ) {
+            Image(
+                painter = painterResource(id = event.imageUrl),
+                contentDescription = "Event Image",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp),
+                contentScale = ContentScale.Crop
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(event.name, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(event.description, style = MaterialTheme.typography.bodyLarge)
+            Spacer(modifier = Modifier.height(16.dp))
+            Text("Location:", style = MaterialTheme.typography.titleMedium)
+            Text(event.location, style = MaterialTheme.typography.bodyLarge)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text("Date:", style = MaterialTheme.typography.titleMedium)
+            Text(event.date, style = MaterialTheme.typography.bodyLarge)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text("Time:", style = MaterialTheme.typography.titleMedium)
+            Text(event.time, style = MaterialTheme.typography.bodyLarge)
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = {
+                val intent = Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("https://gdsc.community.dev/events/details/developer-student-clubs-mohan-babu-university-tirupati-india-presents-google-developer-student-clubs-convocation-ceremony/")
+                )
+                context.startActivity(intent)
+            }) {
+                Text("Register Now")
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EventCard(event: EventDetails, onClick: () -> Unit) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .clickable { onClick() },
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp) // Use Material 3 elevation
+    ) {
+        Row(modifier = Modifier.padding(16.dp)) {
+            Image(
+                painter = painterResource(id = event.imageUrl), // Use placeholder image for now
+                contentDescription = "Event Image",
+                modifier = Modifier
+                    .size(80.dp)
+                    .weight(1f),
+                contentScale = ContentScale.Crop
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Column(modifier = Modifier.weight(2f)) {
+                Text(text = event.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(text = event.description, style = MaterialTheme.typography.bodyMedium, maxLines = 2)
+            }
+        }
+    }
+}
+
+data class EventDetails(
+    val name: String,
+    val description: String,
+    val location: String,
+    val date: String,
+    val time: String,
+    val imageUrl: Int
+)
+
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(navController: NavController) {
     val context = LocalContext.current
@@ -111,13 +243,14 @@ fun HomeScreen(navController: NavController) {
     ) {
         Text(
             text = "Welcome, $username!",
-            style = MaterialTheme.typography.h6,
+            style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(0.dp)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         CommunityNav()
+//        UpcomingEvent()
 
 //        Button(onClick = {
 //            if (ContextCompat.checkSelfPermission(
@@ -146,8 +279,6 @@ fun HomeScreen(navController: NavController) {
     }
 }
 
-
-// ... (rest of your code: saveUserDetailsToFirestore, SharedPreferenceManager, etc.)
 @Composable
 fun saveUserDetailsToFirestore() {
     val sharedPrefManager = SharedPreferenceManager(LocalContext.current)
