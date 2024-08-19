@@ -28,6 +28,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Feedback
@@ -48,6 +49,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -171,6 +173,9 @@ fun NavigationComponent(navController: NavHostController, innerPadding: PaddingV
         }
         composable("Logout") {
             onLogout(navController, authViewModel)
+        }
+        composable("forgot-password") {
+            ForgotPasswordScreen(navController)
         }
     }
 }
@@ -766,7 +771,47 @@ fun SocialMediaIcon(platform: String, url: String) {
 }
 
 @Composable
+fun SettingsSwitch(
+    text: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    val context = LocalContext.current
+    val sharedPreferences = context.getSharedPreferences("Settings", Context.MODE_PRIVATE)
+    val editor = sharedPreferences.edit()
+
+    var isChecked by remember { mutableStateOf(checked) }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.weight(1f)
+        )
+        Switch(
+            checked = isChecked,
+            onCheckedChange = { newChecked ->
+                isChecked = newChecked
+                onCheckedChange(newChecked)
+                editor.putBoolean("email_notifications", newChecked)
+                editor.apply()
+                Toast.makeText(context, "Email Notifications ${if (newChecked) "Enabled" else "Disabled"}", Toast.LENGTH_SHORT).show()
+            }
+        )
+    }
+}
+
+@Composable
 fun SettingsScreen(navController: NavController) {
+    val context = LocalContext.current
+    val sharedPreferences = context.getSharedPreferences("Settings", Context.MODE_PRIVATE)
+    val emailNotificationsEnabled = sharedPreferences.getBoolean("email_notifications", true)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -778,6 +823,71 @@ fun SettingsScreen(navController: NavController) {
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
+        // Account Section
+        SectionHeader(text = "Account")
+        SettingsOption(
+            text = "Profile",
+            onClick = { navController.navigate("profile") }
+        )
+        SettingsOption(
+            text = "Change Password",
+            onClick = { navController.navigate("forgot-password") }
+        )
+
+//        SectionHeader(text = "Notifications")
+//        SettingsSwitch(
+//            text = "Email Notifications",
+//            checked = emailNotificationsEnabled,
+//            onCheckedChange = { isChecked ->
+//                // Handle the change if needed
+//            }
+//        )
+        
+        SectionHeader(text = "Notifications")
+        SettingsSwitch(
+            text = "Push Notifications",
+            checked = false,
+            onCheckedChange = { /* Handle change */ }
+        )
+
+        // Privacy Section
+        SectionHeader(text = "Privacy")
+        SettingsOption(
+            text = "Privacy Policy",
+            onClick = {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://gdsc.community.dev/participation-terms/"))
+                context.startActivity(intent)
+            }
+        )
+        // Logout Button
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(
+            onClick = { /* Handle logout */ },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Logout")
+        }
+    }
+}
+
+@Composable
+fun SettingsOption(text: String, onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.weight(1f)
+        )
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+            contentDescription = null
+        )
     }
 }
 
