@@ -190,6 +190,12 @@ fun NavigationComponent(navController: NavHostController, innerPadding: PaddingV
             val event = getEventById(eventId)
             NewScreen(event)
         }
+//        navController.navigate("PastEventDetails/{eventId}") {
+//            composable("PastEventDetails/{eventId}") { backStackEntry ->
+//                val eventId = backStackEntry.arguments?.getString("eventId") ?: return@composable
+//                PastEventDetailsScreen(eventId, navController)
+//            }
+//        }
     }
 }
 

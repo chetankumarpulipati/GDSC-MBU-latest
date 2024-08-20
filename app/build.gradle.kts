@@ -51,6 +51,9 @@ android {
 }
 
 dependencies {
+//    implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
+//    implementation("com.google.firebase:firebase-crashlytics")
+//    implementation("com.google.firebase:firebase-analytics")
     implementation("androidx.compose.material:material-icons-core")
     implementation("androidx.compose.material:material-icons-extended")
     implementation("io.coil-kt:coil-compose:2.1.0")

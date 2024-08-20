@@ -56,6 +56,56 @@ import com.gdsc.gdsc_mbu.ui.theme.lightblack
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
+//@Composable
+//fun CommunityNav() {
+//    val context = LocalContext.current
+//
+//    Card(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .padding(16.dp)
+//            .clickable {
+//                val intent = Intent(
+//                    Intent.ACTION_VIEW,
+//                    Uri.parse("https://gdsc.community.dev/mohan-babu-university-tirupati-india/")
+//                )
+//                context.startActivity(intent)
+//            },
+//        shape = RoundedCornerShape(16.dp), // Use Material 3 shape
+//        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp) // Use Material 3 elevation
+//    ) {
+//        Row(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(16.dp),
+//            verticalAlignment = Alignment.CenterVertically,
+//            horizontalArrangement = Arrangement.SpaceBetween
+//        ) {
+//            Column(
+//                modifier = Modifier.weight(1f)
+//            ) {
+//                Text(
+//                    text = "Join our Community!",
+//                    color = MaterialTheme.colorScheme.primary,
+//                    fontSize = 18.sp,
+//                    fontWeight = FontWeight.Bold
+//                )
+//                Spacer(modifier = Modifier.height(4.dp))
+//                Text(
+//                    text = "Connect and collaborate with fellow developers.",
+//                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+//                    fontSize = 14.sp
+//                )
+//            }
+//            Icon(
+//                imageVector = Icons.Filled.ArrowForward,
+//                contentDescription = "Go to Community",
+//                tint = MaterialTheme.colorScheme.primary
+//            )
+//        }
+//    }
+//}
+
 @Composable
 fun CommunityNav() {
     val context = LocalContext.current
@@ -71,8 +121,8 @@ fun CommunityNav() {
                 )
                 context.startActivity(intent)
             },
-        shape = RoundedCornerShape(16.dp), // Use Material 3 shape
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp) // Use Material 3 elevation
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp)
     ) {
         Row(
             modifier = Modifier
@@ -174,6 +224,18 @@ fun NewScreen(event: Event) {
         }
     }
 }
+
+data class Event(
+    val id: String,
+    val name: String,
+    val description: String,
+    val photoUrl: String,
+    val date: String,
+    val time: String,
+    val rsvpCount: Int,
+    val keyThemes: List<String>,
+    val detailedDescription: String
+)
 
 @Composable
 fun EventCard(navController: NavController, event: Event) {
@@ -314,17 +376,86 @@ fun EventDetailsScreen(eventId: String, navController: NavController) {
     }
 }
 
-data class Event(
-    val id: String,
-    val name: String,
-    val description: String,
-    val photoUrl: String,
-    val date: String,
-    val time: String,
-    val rsvpCount: Int,
-    val keyThemes: List<String>,
-    val detailedDescription: String
-)
+//@OptIn(ExperimentalMaterial3Api::class)
+//@Composable
+//fun PastEventDetailsScreen(eventId: String, navController: NavController) {
+//    val event = getEventById(eventId)
+//
+//    Scaffold(
+//        topBar = {
+//            TopAppBar(
+//                title = { Text("Event Details") },
+//                navigationIcon = {
+//                    IconButton(onClick = { navController.popBackStack() }) {
+//                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+//                    }
+//                }
+//            )
+//        }
+//    ) { paddingValues ->
+//        Column(
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .padding(paddingValues)
+//                .padding(16.dp)
+//        ) {
+//            Text(
+//                text = event.name,
+//                style = MaterialTheme.typography.headlineMedium,
+//                fontWeight = FontWeight.Bold
+//            )
+//            Spacer(modifier = Modifier.height(8.dp))
+//            Image(
+//                painter = rememberImagePainter(event.photoUrl),
+//                contentDescription = null,
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(200.dp)
+//            )
+//            Spacer(modifier = Modifier.height(8.dp))
+//            Text(
+//                text = event.detailedDescription,
+//                style = MaterialTheme.typography.bodyLarge
+//            )
+//        }
+//    }
+//}
+//
+//@Composable
+//fun PastEventCard(navController: NavController, event: Event) {
+//    Card(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .padding(vertical = 8.dp)
+//            .clickable { navController.navigate("PastEventDetails/${event.id}") },
+//        shape = RoundedCornerShape(12.dp),
+//    ) {
+//        Column(
+//            modifier = Modifier.padding(16.dp)
+//        ) {
+//            Text(
+//                text = event.name,
+//                style = MaterialTheme.typography.headlineMedium,
+//                fontWeight = FontWeight.Bold
+//            )
+//            Spacer(modifier = Modifier.height(8.dp))
+//            Image(
+//                painter = rememberImagePainter(event.photoUrl),
+//                contentDescription = null,
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(150.dp)
+//            )
+//            Spacer(modifier = Modifier.height(8.dp))
+//            Text(
+//                text = event.description,
+//                style = MaterialTheme.typography.bodyLarge,
+//                maxLines = 2,
+//                overflow = TextOverflow.Ellipsis
+//            )
+//        }
+//    }
+//}
 
 @Composable
 fun HomeScreen(navController: NavController) {
@@ -367,6 +498,19 @@ fun HomeScreen(navController: NavController) {
             """.trimIndent()
         )
     )
+    val pastEvents = listOf(
+        Event(
+            id = "2",
+            name = "Past Event Example",
+            description = "This is an example of a past event.",
+            photoUrl = "https://example.com/past_event.jpg",
+            date = "July 15",
+            time = "10:00 AM - 1:00 PM",
+            rsvpCount = 50,
+            keyThemes = listOf("Networking", "Learning"),
+            detailedDescription = "Detailed description of the past event."
+        )
+    )
     val context = LocalContext.current
     val notificationHelper = NotificationHelper(context)
 
@@ -403,9 +547,23 @@ fun HomeScreen(navController: NavController) {
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(0.dp)
             )
+
             events.forEach { event ->
                 EventCard(navController, event)
             }
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+
+        Column {
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "Past Events",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(0.dp)
+            )
+//            pastEvents.forEach { event ->
+//                PastEventCard(event)
+//            }
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
@@ -420,28 +578,30 @@ fun HomeScreen(navController: NavController) {
     }
 }
 
-@Composable
-fun saveUserDetailsToFirestore() {
-    val sharedPrefManager = SharedPreferenceManager(LocalContext.current)
-    val userEmail = sharedPrefManager.userEmail ?: return
-    val userName = sharedPrefManager.getUserDetails()["name"] ?: "Name not available"
-    val userMobile = sharedPrefManager.getUserDetails()["mobile"] ?: "Mobile number not available"
-    val userRoll = sharedPrefManager.getUserDetails()["roll"] ?: "Roll number not available"
-    val userCollege = sharedPrefManager.getUserDetails()["college"] ?: "College name not available"
-    val db = Firebase.firestore
-    val data = hashMapOf(
-        "name" to userName,
-        "email" to userEmail,
-        "mobile" to userMobile,
-        "roll" to userRoll,
-        "college" to userCollege
-    )
-    val documentReference = db.collection("USERDETAILS").document(userEmail)
-    documentReference.set(data)
-        .addOnSuccessListener {
-            Log.d("data-firestore", "DocumentSnapshot added with ID: ${documentReference.id}")
-        }
-        .addOnFailureListener {
-            Log.d("data-firestore", "Error adding document", it)
-        }
-}
+    @Composable
+    fun saveUserDetailsToFirestore() {
+        val sharedPrefManager = SharedPreferenceManager(LocalContext.current)
+        val userEmail = sharedPrefManager.userEmail ?: return
+        val userName = sharedPrefManager.getUserDetails()["name"] ?: "Name not available"
+        val userMobile =
+            sharedPrefManager.getUserDetails()["mobile"] ?: "Mobile number not available"
+        val userRoll = sharedPrefManager.getUserDetails()["roll"] ?: "Roll number not available"
+        val userCollege =
+            sharedPrefManager.getUserDetails()["college"] ?: "College name not available"
+        val db = Firebase.firestore
+        val data = hashMapOf(
+            "name" to userName,
+            "email" to userEmail,
+            "mobile" to userMobile,
+            "roll" to userRoll,
+            "college" to userCollege
+        )
+        val documentReference = db.collection("USERDETAILS").document(userEmail)
+        documentReference.set(data)
+            .addOnSuccessListener {
+                Log.d("data-firestore", "DocumentSnapshot added with ID: ${documentReference.id}")
+            }
+            .addOnFailureListener {
+                Log.d("data-firestore", "Error adding document", it)
+            }
+    }
