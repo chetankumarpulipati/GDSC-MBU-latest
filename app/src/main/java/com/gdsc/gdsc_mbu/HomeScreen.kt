@@ -1,7 +1,6 @@
 package com.gdsc.gdsc_mbu
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
@@ -24,6 +23,8 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
@@ -40,6 +41,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -106,26 +108,70 @@ fun CommunityNav() {
 
 @Composable
 fun NewScreen(event: Event) {
+    val scrollstate = rememberScrollState()
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(scrollstate)
             .padding(16.dp)
     ) {
         Text(
-            text = "Event Details",
+            text = event.name,
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(16.dp))
+        Image(
+            painter = rememberImagePainter(event.photoUrl),
+            contentDescription = null,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+        )
+        Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "Name: ${event.name}",
+            text = "Date: ${event.date}",
             style = MaterialTheme.typography.bodyLarge
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Description: ${event.description}",
+            text = "Time: ${event.time}",
             style = MaterialTheme.typography.bodyLarge
         )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "RSVP'd: ${event.rsvpCount}",
+            style = MaterialTheme.typography.bodyLarge
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "Key Themes: ${event.keyThemes.joinToString(", ")}",
+            style = MaterialTheme.typography.bodyLarge
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = event.detailedDescription,
+            style = MaterialTheme.typography.bodyLarge
+        )
+        val context = LocalContext.current
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(
+            onClick = {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://gdsc.community.dev/events/details/developer-student-clubs-mohan-babu-university-tirupati-india-presents-google-developer-student-clubs-convocation-ceremony/"))
+                context.startActivity(intent)
+            },
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(0.8f)
+                .height(50.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = Color.White
+            )
+        ) {
+            Text("RSVP", style = MaterialTheme.typography.labelLarge)
+        }
     }
 }
 
@@ -182,7 +228,43 @@ fun EventCard(navController: NavController, event: Event) {
 
 fun getEventById(eventId: String): Event {
     val events = listOf(
-        Event("1", "Event Name", "Description 1", "https://www.google.com"),
+        Event(
+            id = "1",
+            name = "Google Developer Student Clubs Convocation Ceremony",
+            description = "The GDSC MBU Convocation Ceremony is happening on August 22nd at the Dasari Auditorium!",
+            photoUrl = "https://res.cloudinary.com/startup-grind/image/upload/c_fill,w_500,h_500,g_center/c_fill,dpr_2.0,f_auto,g_center,q_auto:good/v1/gcs/platform-data-dsc/events/GDSC%20Convocation%20ermony_Tj7unl2.jpg",
+            date = "August 22",
+            time = "2:00 PM - 5:00 PM",
+            rsvpCount = 0,
+            keyThemes = listOf("Accessibility", "Career Development"),
+            detailedDescription = """
+                🎉 Calling all tech enthusiasts at MBU! 🎉
+
+                The GDSC MBU Convocation Ceremony is happening on August 22nd at the Dasari Auditorium!
+
+                ⏰ 2:00 PM - 5:00 PM
+
+                🌟 What to expect:
+
+                Reflect on GDSC's incredible journey over the past year
+
+                Hear inspiring faculty speeches about club activities
+
+                Gain insights from leads on their community experiences
+
+                Witness top contributors receive special prizes
+
+                Celebrate Solution Challenge participants with awards
+
+                Enjoy swag distribution for Gen AI Study Jam participants
+
+                Get valuable insights into trending technologies and industry culture
+
+                ✅ Selected attendees will receive a confirmation email and be added to a WhatsApp group for further updates.
+
+                📲 Follow @gdsc.mbu on Instagram for more!
+            """.trimIndent()
+        )
     )
     return events.first { it.id == eventId }
 }
@@ -236,14 +318,54 @@ data class Event(
     val id: String,
     val name: String,
     val description: String,
-    val photoUrl: String
+    val photoUrl: String,
+    val date: String,
+    val time: String,
+    val rsvpCount: Int,
+    val keyThemes: List<String>,
+    val detailedDescription: String
 )
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(navController: NavController) {
     val events = listOf(
-        Event("1", "Google Developer Student Clubs Convocation Ceremony", "The GDSC MBU Convocation Ceremony is happening on August 22nd at the Dasari Auditorium!","https://res.cloudinary.com/startup-grind/image/upload/c_fill,w_500,h_500,g_center/c_fill,dpr_2.0,f_auto,g_center,q_auto:good/v1/gcs/platform-data-dsc/events/GDSC%20Convocation%20ermony_Tj7unl2.jpg"),
+        Event(
+            id = "1",
+            name = "Google Developer Student Clubs Convocation Ceremony",
+            description = "The GDSC MBU Convocation Ceremony is happening on August 22nd at the Dasari Auditorium!",
+            photoUrl = "https://res.cloudinary.com/startup-grind/image/upload/c_fill,w_500,h_500,g_center/c_fill,dpr_2.0,f_auto,g_center,q_auto:good/v1/gcs/platform-data-dsc/events/GDSC%20Convocation%20ermony_Tj7unl2.jpg",
+            date = "August 22",
+            time = "2:00 PM - 5:00 PM",
+            rsvpCount = 0,
+            keyThemes = listOf("Accessibility", "Career Development"),
+            detailedDescription = """
+                🎉 Calling all tech enthusiasts at MBU! 🎉
+
+                The GDSC MBU Convocation Ceremony is happening on August 22nd at the Dasari Auditorium!
+
+                ⏰ 2:00 PM - 5:00 PM
+
+                🌟 What to expect:
+
+                Reflect on GDSC's incredible journey over the past year
+
+                Hear inspiring faculty speeches about club activities
+
+                Gain insights from leads on their community experiences
+
+                Witness top contributors receive special prizes
+
+                Celebrate Solution Challenge participants with awards
+
+                Enjoy swag distribution for Gen AI Study Jam participants
+
+                Get valuable insights into trending technologies and industry culture
+
+                ✅ Selected attendees will receive a confirmation email and be added to a WhatsApp group for further updates.
+
+                📲 Follow @gdsc.mbu on Instagram for more!
+            """.trimIndent()
+        )
     )
     val context = LocalContext.current
     val notificationHelper = NotificationHelper(context)
