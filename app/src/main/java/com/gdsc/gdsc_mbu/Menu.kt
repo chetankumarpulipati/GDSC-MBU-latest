@@ -181,8 +181,14 @@ fun NavigationComponent(navController: NavHostController, innerPadding: PaddingV
         composable("forgot-password") {
             ForgotPasswordScreen(navController)
         }
-        composable("events") {
-            details_page(navController)
+        composable("EventDetailsScreen/{eventId}") { backStackEntry ->
+            val eventId = backStackEntry.arguments?.getString("eventId") ?: return@composable
+            EventDetailsScreen(eventId)
+        }
+        composable("NewScreen/{eventId}") { backStackEntry ->
+            val eventId = backStackEntry.arguments?.getString("eventId") ?: return@composable
+            val event = getEventById(eventId)
+            NewScreen(event)
         }
     }
 }

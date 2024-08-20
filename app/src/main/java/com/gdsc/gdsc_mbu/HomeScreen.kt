@@ -100,28 +100,25 @@ fun CommunityNav() {
 }
 
 @Composable
-fun details_page(navController: NavController){
+fun NewScreen(event: Event) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Image(
-            painter = rememberImagePainter("https://res.cloudinary.com/startup-grind/image/upload/c_fill,w_500,h_500,g_center/c_fill,dpr_2.0,f_auto,g_center,q_auto:good/v1/gcs/platform-data-dsc/events/GDSC%20Convocation%20ermony_Tj7unl2.jpg"),
-            contentDescription = null,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
-        )
-        Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "Event 1",
+            text = "Event Details",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold
         )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = "Name: ${event.name}",
+            style = MaterialTheme.typography.bodyLarge
+        )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Description 1",
+            text = "Description: ${event.description}",
             style = MaterialTheme.typography.bodyLarge
         )
     }
@@ -133,9 +130,9 @@ fun EventCard(navController: NavController, event: Event) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
-            .clickable { navController.navigate("EventDetailsScreen/${event.id}") },
+            .clickable { navController.navigate("NewScreen/${event.id}") },
         shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp) // Increased elevation
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
     ) {
         Row(
             modifier = Modifier
@@ -145,48 +142,48 @@ fun EventCard(navController: NavController, event: Event) {
         ) {
             Image(
                 painter = painterResource(id = R.drawable.convocation),
-                contentDescription = event.name, // Provide content description
+                contentDescription = event.name,
                 modifier = Modifier
-                    .size(80.dp) // Increased image size
-                    .weight(1f), // Image takes up proportional space
-                contentScale = ContentScale.Crop // Ensure image fits within bounds
+                    .size(80.dp)
+                    .weight(1f),
+                contentScale = ContentScale.Crop
             )
             Spacer(modifier = Modifier.width(16.dp))
             Column(
                 modifier = Modifier
-                    .weight(2f) // Text content takes up more space
-                    .padding(end = 8.dp) // Add padding to the right for visual balance
+                    .weight(2f)
+                    .padding(end = 8.dp)
             ) {
                 Text(
                     text = event.name,
                     color = MaterialTheme.colorScheme.primary,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    maxLines = 2, // Limit text to 2 lines
-                    overflow = TextOverflow.Ellipsis // Add ellipsis if text overflows
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
-                Spacer(modifier = Modifier.height(8.dp)) // Increased spacer height
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = event.description,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
                     fontSize = 14.sp,
-                    maxLines = 3, // Limit description to 3 lines
-                    overflow = TextOverflow.Ellipsis // Add ellipsis if text overflows
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }
     }
 }
+
 fun getEventById(eventId: String): Event {
     val events = listOf(
-        Event("1", "Event 1", "Description 1", "https://example.com/photo1.jpg"),
+        Event("1", "Event Name", "Description 1", "https://www.google.com"),
     )
     return events.first { it.id == eventId }
 }
 
 @Composable
 fun EventDetailsScreen(eventId: String) {
-    // Fetch event details using eventId
     val event = getEventById(eventId)
 
     Column(
@@ -226,7 +223,7 @@ data class Event(
 @Composable
 fun HomeScreen(navController: NavController) {
     val events = listOf(
-        Event("1", "Event 1", "Description 1", "https://res.cloudinary.com/startup-grind/image/upload/c_fill,w_500,h_500,g_center/c_fill,dpr_2.0,f_auto,g_center,q_auto:good/v1/gcs/platform-data-dsc/events/GDSC%20Convocation%20ermony_Tj7unl2.jpg"),
+        Event("1", "Google Developer Student Clubs Convocation Ceremony", "The GDSC MBU Convocation Ceremony is happening on August 22nd at the Dasari Auditorium!","https://res.cloudinary.com/startup-grind/image/upload/c_fill,w_500,h_500,g_center/c_fill,dpr_2.0,f_auto,g_center,q_auto:good/v1/gcs/platform-data-dsc/events/GDSC%20Convocation%20ermony_Tj7unl2.jpg"),
     )
     val context = LocalContext.current
     val notificationHelper = NotificationHelper(context)

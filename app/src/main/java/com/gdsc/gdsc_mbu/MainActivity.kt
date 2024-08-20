@@ -68,6 +68,11 @@ class MainActivity : ComponentActivity() {
                 val eventId = backStackEntry.arguments?.getString("eventId") ?: return@composable
                 EventDetailsScreen(eventId)
             }
+            composable("NewScreen/{eventId}") { backStackEntry ->
+                val eventId = backStackEntry.arguments?.getString("eventId") ?: return@composable
+                val event = getEventById(eventId)
+                NewScreen(event)
+            }
         }
         if(isLoggedIn){
           navController.navigate("Menu")
