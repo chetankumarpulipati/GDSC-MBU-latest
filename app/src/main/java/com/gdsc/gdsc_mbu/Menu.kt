@@ -183,7 +183,7 @@ fun NavigationComponent(navController: NavHostController, innerPadding: PaddingV
         }
         composable("EventDetailsScreen/{eventId}") { backStackEntry ->
             val eventId = backStackEntry.arguments?.getString("eventId") ?: return@composable
-            EventDetailsScreen(eventId)
+            EventDetailsScreen(eventId, navController)
         }
         composable("NewScreen/{eventId}") { backStackEntry ->
             val eventId = backStackEntry.arguments?.getString("eventId") ?: return@composable
