@@ -915,7 +915,7 @@ fun SettingsScreen(navController: NavController) {
         SettingsOption(
             text = "Privacy Policy",
             onClick = {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://gdsc.community.dev/participation-terms/"))
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://chetankumarpulipati.github.io/GDSC-MBU-PRIVACY-POLICY/"))
                 context.startActivity(intent)
             }
         )
