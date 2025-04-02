@@ -20,7 +20,7 @@ This is the official Android application for the GDSC-MBU community. The app is 
 1.  Clone the repository:
 
     ```bash
-    git clone <repository-url>
+    git clone https://github.com/chetankumarpulipati/GDSC-MBU-latest.git
     cd GDSC-MBU-latest
     ```
 
