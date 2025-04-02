@@ -34,7 +34,9 @@ To build the project, use the Gradle wrapper:
 
 ```bash
 ./gradlew build
+
 Contributing
+
 We welcome contributions! Please follow these steps:
 
 Fork the repository.
